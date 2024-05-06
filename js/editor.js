@@ -25,38 +25,38 @@ let evaluatedValues = []; // All evaluated expressions by line
 
 document.addEventListener("DOMContentLoaded", init);
 
-async function setupHomeCurrency() {
-  try {
-    const response = await fetch('https://ipapi.co/json/');
-    if (!response.ok) {
-      throw new Error('Failed to fetch country information');
-    }
-    const data = await response.json();
-    if (!_.isNil(data.currency)) {
-      homeCurrency = data.currency.toUpperCase()
-    } else if (!_.isNil(data.country)) {
-      homeCurrency = currency.getHomeCurrency(data.country);
-    } else {
-      throw new Error('Failed to obtain country/currency information from ipapi.co');
-    }
-  } catch (error) {
-    console.error("Error while computing home currency using ipapi.co/json", error);
-    try {
-      const response = await fetch('http://ip-api.com/json/');
-      if (!response.ok) {
-        throw new Error('Failed to fetch country information from ip-api.com');
-      }
-      const data = await response.json();
-      const country = data.countryCode;
-      homeCurrency = currency.getHomeCurrency(country);
-    } catch {
-      console.error("Error while computing home currency using ip-api.com/json; Falling back to USD as home currency", error);
-      homeCurrency = 'USD'; // Fallback currency
-    }
-  } finally {
-    createUnit(homeCurrency.toLowerCase())
-  }
-}
+// async function setupHomeCurrency() {
+//   try {
+//     const response = await fetch('https://ipapi.co/json/');
+//     if (!response.ok) {
+//       throw new Error('Failed to fetch country information');
+//     }
+//     const data = await response.json();
+//     if (!_.isNil(data.currency)) {
+//       homeCurrency = data.currency.toUpperCase()
+//     } else if (!_.isNil(data.country)) {
+//       homeCurrency = currency.getHomeCurrency(data.country);
+//     } else {
+//       throw new Error('Failed to obtain country/currency information from ipapi.co');
+//     }
+//   } catch (error) {
+//     console.error("Error while computing home currency using ipapi.co/json", error);
+//     try {
+//       const response = await fetch('http://ip-api.com/json/');
+//       if (!response.ok) {
+//         throw new Error('Failed to fetch country information from ip-api.com');
+//       }
+//       const data = await response.json();
+//       const country = data.countryCode;
+//       homeCurrency = currency.getHomeCurrency(country);
+//     } catch {
+//       console.error("Error while computing home currency using ip-api.com/json; Falling back to USD as home currency", error);
+//       homeCurrency = 'USD'; // Fallback currency
+//     }
+//   } finally {
+//     createUnit(homeCurrency.toLowerCase())
+//   }
+// }
 
 function toggleHelpOverlay() {
   if (showHelp) {
@@ -131,7 +131,7 @@ function createTable(columns, data) {
 }
 
 async function setupEvaluator() {
-  await setupHomeCurrency()
+  // await setupHomeCurrency()
 
   try {
     // setup conversionRates
@@ -146,12 +146,20 @@ async function setupEvaluator() {
 
       if (fromCurrencyCode !== homeCurrency) {
         try {
-          createUnit(fromCurrencyCode.toLowerCase(), unit(1 * rates[homeCurrency], homeCurrency.toLowerCase()));
+          createUnit(
+            fromCurrencyCode.toLowerCase(),
+            unit(1 * rates[homeCurrency], homeCurrency.toLowerCase())
+          );
         } catch {
           try {
-            createUnit(fromCurrencyCode.toUpperCase(), unit(1 * rates[homeCurrency], homeCurrency.toLowerCase()));
+            createUnit(
+              fromCurrencyCode.toUpperCase(),
+              unit(1 * rates[homeCurrency], homeCurrency.toLowerCase())
+            );
           } catch {
-            console.log(`couldnt add ${fromCurrencyCode.toUpperCase()} or ${fromCurrencyCode.toLowerCase()} as currency unit`)
+            console.log(
+              `couldnt add ${fromCurrencyCode.toUpperCase()} or ${fromCurrencyCode.toLowerCase()} as currency unit`
+            );
           }
         }
       }
@@ -159,21 +167,20 @@ async function setupEvaluator() {
   } catch (error) {
     console.error("Error setting up currency tokens:", error);
   }
-
 }
 
 function removeMatches(supersetArray, removeArray) {
-  let result = supersetArray.filter(match => !removeArray.includes(match));
+  let result = supersetArray.filter((match) => !removeArray.includes(match));
   return result;
 }
 
 function replaceFirstXAfterIndex(str, index) {
-  return str.substring(0, index) + str.substring(index).replace('x', '*');
+  return str.substring(0, index) + str.substring(index).replace("x", "*");
 }
 function convertXToMultiplication(lines) {
   for (let i = 0; i < lines.length; i++) {
-    // Converting 'x' as a mutiplication operator. 
-    // for these examples: 'data x 2', 'data x2', '2x2', '2 x2', '2x 2', '2 x 2', '2x data', '2 x data', '2x2x2', data x 2 x data', '2x2x2 x2 x x2 x2 x2 x 2 x 22' 
+    // Converting 'x' as a mutiplication operator.
+    // for these examples: 'data x 2', 'data x2', '2x2', '2 x2', '2x 2', '2 x 2', '2x data', '2 x data', '2x2x2', data x 2 x data', '2x2x2 x2 x x2 x2 x2 x 2 x 22'
     // then convert the 'x' to '*' in that line
     // for these examples: '0x90 x 2', '0x90 x2', '0x90 x 2'
     // then convert them to '0x90 * 2', '0x90 *2', '0x90 * 2' since here 0x represents hexadecimal value
@@ -181,14 +188,14 @@ function convertXToMultiplication(lines) {
     let matchesOfX = [...lines[i].matchAll(regex.X_IN_EXPRESSION)];
     let matchesOfHexa = [...lines[i].matchAll(regex.HEXADECIMAL_VALUE)];
 
-    let XIndices = matchesOfX.map(ele => ele.index)
-    let HexaIndices = matchesOfHexa.map(ele => ele.index)
+    let XIndices = matchesOfX.map((ele) => ele.index);
+    let HexaIndices = matchesOfHexa.map((ele) => ele.index);
 
     let filteredMatches = removeMatches(XIndices, HexaIndices);
     // filteredMatches contains all the indexes where the x will be present on or after the index
 
     for (let index = 0; index < filteredMatches.length; index++) {
-      lines[i] = replaceFirstXAfterIndex(lines[i], filteredMatches[index])
+      lines[i] = replaceFirstXAfterIndex(lines[i], filteredMatches[index]);
     }
 
     // if line still matches with regex.X_IN_EXPRESSION then go through the same operations once again
@@ -197,42 +204,41 @@ function convertXToMultiplication(lines) {
     if (!_.isEmpty(confirmMatchesOfX)) {
       matchesOfHexa = [...lines[i].matchAll(regex.HEXADECIMAL_VALUE)];
 
-      XIndices = confirmMatchesOfX.map(ele => ele.index)
-      HexaIndices = matchesOfHexa.map(ele => ele.index)
+      XIndices = confirmMatchesOfX.map((ele) => ele.index);
+      HexaIndices = matchesOfHexa.map((ele) => ele.index);
       filteredMatches = removeMatches(XIndices, HexaIndices);
       for (let index = 0; index < filteredMatches.length; index++) {
-        lines[i] = replaceFirstXAfterIndex(lines[i], filteredMatches[index])
+        lines[i] = replaceFirstXAfterIndex(lines[i], filteredMatches[index]);
       }
     }
   }
-  return lines
+  return lines;
 }
-
 
 function useMathJs(lines) {
   var mjs_results = [];
 
   // pre evaluation
-  lines = convertXToMultiplication(lines)
+  lines = convertXToMultiplication(lines);
 
   try {
     mjs_results = mathjs_evaluate(lines);
   } catch (error) {
     /* evaluate individual lines from index 0
-    * if any line is throwing an error, then put empty string for that line and continue
-    * if no error, then add that line also to evaluate next time
-    */
+     * if any line is throwing an error, then put empty string for that line and continue
+     * if no error, then add that line also to evaluate next time
+     */
     try {
       var tmpLines = []; // remove errored lines and execute the rest
       for (let index = 0; index < lines.length; index++) {
         try {
           tmpLines.push(lines[index]);
           var lineResult = mathjs_evaluate(tmpLines);
-          mjs_results[index] = lineResult[index]
+          mjs_results[index] = lineResult[index];
         } catch (error) {
           console.log(`Couldn't evaluate: ${lines[index]}`);
           mjs_results[index] = undefined;
-          tmpLines[index] = ''; // Put empty string for lines that throw an error
+          tmpLines[index] = ""; // Put empty string for lines that throw an error
         }
       }
     } catch (error) {
@@ -245,11 +251,11 @@ function useMathJs(lines) {
     try {
       // Convert non-number results to numbers if possible
       if (!_.isNumber(result)) {
-        mjs_results[i] = result.toNumber()
+        mjs_results[i] = result.toNumber();
       }
     } catch (error) {
-      console.log('no result for line ', i + 1)
-      mjs_results[i] = ''; // Ensure non-convertible results are set to empty string
+      console.log("no result for line ", i + 1);
+      mjs_results[i] = ""; // Ensure non-convertible results are set to empty string
     }
   }
 
@@ -260,7 +266,7 @@ function setupDocument() {
   editor = document.getElementById("editor");
   editor.focus();
   output = document.getElementById("output");
-  docId = getDocId();
+  // docId = getDocId();
   helpButton = document.getElementById("help-button");
   helpOverlay = document.getElementById("help-overlay");
   createHelpTables();
@@ -268,19 +274,6 @@ function setupDocument() {
 
 function removeOverlay() {
   document.body.classList.remove("loading");
-}
-
-function getDocId() {
-  let url = window.location.search;
-  let params = new URLSearchParams(url);
-  let id = params.get("id");
-
-  // Sanity check
-  if (id && id !== "undefined") {
-    return id;
-  } else {
-    window.close();
-  }
 }
 
 async function loadData() {
