@@ -1,0 +1,144 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: var(--background);
+  overscroll-behavior: none;
+}
+
+.app {
+  display: flex;
+  justify-content: space-between;
+  overflow: visible;
+}
+
+.editor {
+  background-color: var(--input-background);
+  appearance: none;
+  border: none;
+  outline: none;
+  resize: none;
+  width: 100%;
+  color: var(--input-number);
+}
+
+.output {
+  overflow: visible;
+  border-left: 1px solid var(--tertiary);
+  width: 37%;
+  background-color: var(--output-background);
+}
+
+.editor,
+.output {
+  padding: 8px;
+  white-space: pre;
+  overflow-y: hidden;
+  overflow-x: auto;
+  min-height: 100vh;
+}
+
+.result-btn {
+  height: auto;
+  border: none;
+  outline: none;
+  background-color: transparent;
+}
+
+.editor,
+.output,
+.result-btn {
+  font-family: var(--font-mono);
+  font-size: 37px;
+  line-height: 42px;
+}
+
+.result {
+  color: var(--accent-result);
+}
+
+.variable {
+  color: var(--accent-variable);
+}
+
+.error {
+  cursor: default;
+  color: var(--accent-error);
+}
+
+.result:hover,
+.variable:hover {
+  text-decoration: underline;
+}
+
+.help-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  opacity: 0.7;
+  padding: 10px;
+  background-color: rgb(79 111 102);
+  border-radius: 50%;
+}
+
+.help-overlay {
+  position: fixed; /* Sit on top of the page content */
+  display: none; /* Hidden by default */
+  width: 100%; /* Full width (cover the whole page) */
+  height: 100%; /* Full height (cover the whole page) */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(17, 17, 17, 0.98); /* background with opacity */
+  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+  cursor: pointer; /* Add a pointer on hover */
+  overflow-y: auto;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  border: 1px solid #d5cbd4;
+  margin: 12px 0px 12px 0px;
+}
+
+th {
+  text-align: left;
+  color: var(--accent-result);
+  padding: 12px;
+  font-weight: 420;
+  font-size: 18px;
+}
+
+td {
+  text-align: left;
+  padding: 12px;
+  font-weight: 300;
+  font-size: 21px;
+  color: var(--input-number);
+}
+
+tr:nth-child(even) {
+  background-color: #7f6c6c;
+}
+tr:nth-child(odd) {
+  background-color: #6a6a67;
+}
+.more-operators {
+  color: white;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.reference-link {
+  color: var(--input-number);
+}
