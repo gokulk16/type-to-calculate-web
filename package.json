@@ -1,0 +1,40 @@
+{
+  "name": "type-to-calculate-web",
+  "version": "1.0.0",
+  "description": "Web application to calculate day to day math as you type",
+  "scripts": {
+    "build-with-parcel": "rm -rf .parcel-cache && parcel build --no-optimize",
+    "build": "node esbuild.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gokulk16/type-to-calculate-web.git"
+  },
+  "source": "index.html",
+  "keywords": [
+    "type-to-calculate",
+    "calculate",
+    "calculator",
+    "online calculator"
+  ],
+  "browserslist": "> 0.5%, last 2 versions, not dead",
+  "author": "https://github.com/gokulk16",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gokulk16/type-to-calculate-web/issues"
+  },
+  "homepage": "https://github.com/gokulk16/type-to-calculate-web#readme",
+  "dependencies": {
+    "country-to-currency": "^1.1.5",
+    "lodash": "^4.17.21",
+    "mathjs": "^12.4.2",
+    "show-toast": "^1.1.4"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.2",
+    "esbuild-copy-static-files": "^0.1.0",
+    "fs-extra": "^11.2.0",
+    "parcel": "^2.12.0"
+  }
+}

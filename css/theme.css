@@ -1,0 +1,39 @@
+:root {
+  color-scheme: light;
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", Arial, sans-serif;
+
+  --font-mono: "SF Mono", SFMono-Regular, ui-monospace, Menlo, Monaco,
+    "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", "Oxygen Mono",
+    "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono",
+    "Courier New", monospace;
+
+  --background: #ffffff;
+  --surface: #ffffff;
+  --surface-shade: rgba(0, 0, 0, 0.15);
+  --primary: #191919;
+  --secondary: #7f7f7f;
+  --tertiary: #dedede;
+  --accent-result: #6cace4;
+  --accent-variable: #ffffff;
+  --accent-error: #d12500;
+  --input-number: #c5f615;
+  --input-background: #343e50;
+  --output-background: #1e2b36;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --background: #202124;
+    --surface: #292a2d;
+    --surface-shade: rgba(255, 255, 255, 0.15);
+    --primary: #eaeaea;
+    --secondary: #949496;
+    --tertiary: #444548;
+    --accent-result: #b485ff;
+    --accent-variable: #949496;
+    --accent-error: #ff7557;
+  }
+}

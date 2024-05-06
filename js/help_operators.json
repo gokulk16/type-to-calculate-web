@@ -1,0 +1,74 @@
+{
+  "operators": [
+    {
+      "Name": "Addition",
+      "Operator": "+",
+      "Example": "2 + 3 = 5"
+    },
+    {
+      "Name": "Subtraction",
+      "Operator": "-",
+      "Example": "5 - 2 = 3"
+    },
+    {
+      "Name": "Multiplication",
+      "Operator": ["*", "x"],
+      "Example": ["2 * 3 = 6", "2 x 3 = 6"]
+    },
+    {
+      "Name": "Variable Assignment",
+      "Operator": "=",
+      "Example": "data = 5"
+    },
+    {
+      "Name": "Unit conversion",
+      "Operator": ["to", "in"],
+      "Example": ["2 inch to cm = 5.08", "1 feet to cm = 30.48"]
+    },
+    {
+      "Name": "Grouping",
+      "Operator": "( )",
+      "Example": "(2 + 3) * 2 = 10"
+    },
+    {
+      "Name": "Divide",
+      "Operator": "/",
+      "Example": "6 / 2 = 3"
+    },
+    {
+      "Name": "Percentage",
+      "Operator": "%",
+      "Example": "25% = 0.25"
+    },
+    {
+      "Name": "Addition with Percentage",
+      "Operator": "+",
+      "Example": "200 + 3% = 206"
+    },
+    {
+      "Name": "Modulus",
+      "Operator": "%",
+      "Example": "8 % 3 = 2"
+    },
+    {
+      "Name": "Power",
+      "Operator": "^",
+      "Example": "2 ^ 3 = 8"
+    },
+    {
+      "Name": "Factorial",
+      "Operator": "!",
+      "Example": "3! = 6"
+    },
+    {
+      "Name": "Conditional expression",
+      "Operator": "? :",
+      "Example": "15 > 30 ? 1 : -1 = -1"
+    },
+    {
+      "Name": "Range",
+      "Operator": ":",
+      "Example": "1:4 = [1,2,3,4]"
+    }
+  ]
+}

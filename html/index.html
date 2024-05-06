@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="./css/theme.css" />
+    <link rel="stylesheet" href="./css/editor.css" />
+    <script type="module" src="./js/editor.js"></script>
+  </head>
+  <body>
+    <div class="app">
+      <div
+        id="editor"
+        class="editor"
+        contenteditable="plaintext-only"
+        spellcheck="false"
+      ></div>
+      <div
+        id="output"
+        class="output"
+        title="click to copy &#10;Shift + click to copy & paste"
+      ></div>
+      <div
+        id="help-button"
+        class="help-button"
+        title="Click to open help. &#10;Shortcut: 'Ctrl + ?'"
+      >
+        <img src="./assets/images/question-mark-icon.svg" alt="Help" />
+      </div>
+      <div class="help-overlay" id="help-overlay">
+        <div id="shortcut-table-container"></div>
+        <div id="operator-table-container"></div>
+        <p class="more-operators">
+          For&nbsp;
+          <a
+            class="reference-link"
+            target="_blank"
+            href="https://mathjs.org/docs/expressions/syntax.html#operators"
+          >
+            more operators</a
+          >
+        </p>
+        <div id="unit-table-container"></div>
+      </div>
+    </div>
+  </body>
+</html>
