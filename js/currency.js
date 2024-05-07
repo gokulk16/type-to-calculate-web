@@ -1,8 +1,10 @@
 "use strict";
-import * as storage from "./storage.js";
+import { LocalStorage } from 'web-browser-storage'
 import * as constants from "./constants.js";
+
 const _ = require("lodash");
 const countryToCurrency = require('country-to-currency');
+const storage = new LocalStorage()
 
 export function getHomeCurrency(country) {
     return countryToCurrency[country.toUpperCase()].toUpperCase()
@@ -41,12 +43,11 @@ export async function fetchCurrencyRatesFromAPI() {
     } catch (error) {
         console.error('Failed to fetch currency rates:', error);
     }
-
 }
 
 export async function getConversionRates() {
     let currencyApiData;
-    const cachedApiData = await storage.load('currenciesApiData', null);
+    const cachedApiData = storage.get('currenciesApiData');
 
     if (!_.isEmpty(cachedApiData)) {
         const time_last_update_unix = cachedApiData.time_last_update_unix;
@@ -55,14 +56,14 @@ export async function getConversionRates() {
         const timeDifference = currentTime - lastUpdateTime.getTime();
         if (timeDifference > constants.cacheDuration) {
             currencyApiData = await fetchCurrencyRatesFromAPI();
-            await storage.save('currenciesApiData', currencyApiData);
+            storage.set('currenciesApiData', currencyApiData);
         } else {
             currencyApiData = cachedApiData;
             console.log('Currency conversion data taken from local storage cache')
         }
     } else {
         currencyApiData = await fetchCurrencyRatesFromAPI();
-        await storage.save('currenciesApiData', currencyApiData);
+        await storage.set('currenciesApiData', currencyApiData);
     }
 
     // Example: Convert 1 units of each currency to different currencies
