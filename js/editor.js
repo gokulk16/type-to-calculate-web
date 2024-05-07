@@ -1,62 +1,62 @@
 "use strict";
 
-// import * as storage from "./storage.js";
-// import * as win from "./window.js";
-// import * as currency from "./currency.js";
+import * as currency from "./currency.js";
 import * as regex from "./regex.js";
 import helpOperators from "./help_operators.json";
 import helpShortcuts from "./help_shortcuts.json";
 import helpUnits from "./help_units.json";
+import { LocalStorage } from 'web-browser-storage';
+import { createUnit, unit, evaluate as mathjs_evaluate } from 'mathjs';
 
-import { createUnit, unit, evaluate as mathjs_evaluate } from 'mathjs'
-
+const storage = new LocalStorage();
 var showToast = require("show-toast");
 var _ = require("lodash");
 
 let editor;
 let output;
-let docId;
+let currentDocData = {};
+let historyData = [];
 let helpButton;
 let helpOverlay;
 let conversionRates;
 let homeCurrency;
 let showHelp = false;
 let evaluatedValues = []; // All evaluated expressions by line
-
+let docId;
 document.addEventListener("DOMContentLoaded", init);
 
-// async function setupHomeCurrency() {
-//   try {
-//     const response = await fetch('https://ipapi.co/json/');
-//     if (!response.ok) {
-//       throw new Error('Failed to fetch country information');
-//     }
-//     const data = await response.json();
-//     if (!_.isNil(data.currency)) {
-//       homeCurrency = data.currency.toUpperCase()
-//     } else if (!_.isNil(data.country)) {
-//       homeCurrency = currency.getHomeCurrency(data.country);
-//     } else {
-//       throw new Error('Failed to obtain country/currency information from ipapi.co');
-//     }
-//   } catch (error) {
-//     console.error("Error while computing home currency using ipapi.co/json", error);
-//     try {
-//       const response = await fetch('http://ip-api.com/json/');
-//       if (!response.ok) {
-//         throw new Error('Failed to fetch country information from ip-api.com');
-//       }
-//       const data = await response.json();
-//       const country = data.countryCode;
-//       homeCurrency = currency.getHomeCurrency(country);
-//     } catch {
-//       console.error("Error while computing home currency using ip-api.com/json; Falling back to USD as home currency", error);
-//       homeCurrency = 'USD'; // Fallback currency
-//     }
-//   } finally {
-//     createUnit(homeCurrency.toLowerCase())
-//   }
-// }
+async function setupHomeCurrency() {
+  try {
+    const response = await fetch('https://ipapi.co/json/');
+    if (!response.ok) {
+      throw new Error('Failed to fetch country information');
+    }
+    const data = await response.json();
+    if (!_.isNil(data.currency)) {
+      homeCurrency = data.currency.toUpperCase()
+    } else if (!_.isNil(data.country)) {
+      homeCurrency = currency.getHomeCurrency(data.country);
+    } else {
+      throw new Error('Failed to obtain country/currency information from ipapi.co');
+    }
+  } catch (error) {
+    console.error("Error while computing home currency using ipapi.co/json", error);
+    try {
+      const response = await fetch('http://ip-api.com/json/');
+      if (!response.ok) {
+        throw new Error('Failed to fetch country information from ip-api.com');
+      }
+      const data = await response.json();
+      const country = data.countryCode;
+      homeCurrency = currency.getHomeCurrency(country);
+    } catch {
+      console.error("Error while computing home currency using ip-api.com/json; Falling back to USD as home currency", error);
+      homeCurrency = 'USD'; // Fallback currency
+    }
+  } finally {
+    createUnit(homeCurrency.toLowerCase());
+  }
+}
 
 function toggleHelpOverlay() {
   if (showHelp) {
@@ -79,59 +79,60 @@ function onOverlayClick() {
 
 async function createHelpTables() {
   // Operator Table
-  const operatorColumns = ['Name', 'Operator', 'Example'];
+  const operatorColumns = ["Name", "Operator", "Example"];
   const operatorsDataa = [...helpOperators.operators];
   const operatorTableHtml = createTable(operatorColumns, operatorsDataa);
-  document.getElementById('operator-table-container').innerHTML = operatorTableHtml;
+  document.getElementById("operator-table-container").innerHTML =
+    operatorTableHtml;
 
   // Keyboard shortcut table
-  const shortcutColumns = ['Action', 'Shortcut'];
+  const shortcutColumns = ["Action", "Shortcut"];
   const shortcutsData = [...helpShortcuts.shortcuts];
   const shortcutTableHtml = createTable(shortcutColumns, shortcutsData);
-  document.getElementById('shortcut-table-container').innerHTML = shortcutTableHtml;
-
+  document.getElementById("shortcut-table-container").innerHTML =
+    shortcutTableHtml;
 
   // Units table
-  const unitColumns = ['Value', 'Units'];
+  const unitColumns = ["Value", "Units"];
   const unitsData = [...helpUnits.units];
   const unitTableHtml = createTable(unitColumns, unitsData);
-  document.getElementById('unit-table-container').innerHTML = unitTableHtml;
+  document.getElementById("unit-table-container").innerHTML = unitTableHtml;
 }
 
 function createTable(columns, data) {
-  let table = '<table>';
+  let table = "<table>";
 
   // Create table header
-  table += '<thead><tr>';
-  columns.forEach(column => {
+  table += "<thead><tr>";
+  columns.forEach((column) => {
     table += `<th>${column}</th>`;
   });
-  table += '</tr></thead>';
+  table += "</tr></thead>";
 
   // Create table body
-  table += '<tbody>';
-  data.forEach(row => {
-    table += '<tr>';
-    columns.forEach(column => {
+  table += "<tbody>";
+  data.forEach((row) => {
+    table += "<tr>";
+    columns.forEach((column) => {
       table += `<td>`;
 
       if (Array.isArray(row[column])) {
-        row[column].forEach(item => {
+        row[column].forEach((item) => {
           table += `${item}</br>`;
         });
       } else {
         table += `${row[column]}`;
       }
-      table += '</td>';
+      table += "</td>";
     });
-    table += '</tr>';
+    table += "</tr>";
   });
-  table += '</tbody></table>';
+  table += "</tbody></table>";
   return table;
 }
 
 async function setupEvaluator() {
-  // await setupHomeCurrency()
+  await setupHomeCurrency()
 
   try {
     // setup conversionRates
@@ -266,28 +267,43 @@ function setupDocument() {
   editor = document.getElementById("editor");
   editor.focus();
   output = document.getElementById("output");
-  // docId = getDocId();
+  docId = generateDocID();
+  currentDocData.docId = docId;
   helpButton = document.getElementById("help-button");
   helpOverlay = document.getElementById("help-overlay");
   createHelpTables();
+  document.title = 'Type To Calculate';
 }
 
 function removeOverlay() {
   document.body.classList.remove("loading");
 }
 
-async function loadData() {
-  // let data = await getData();
-
-  // if (data.text) {
-  //   editor.innerText = data.text;
-  // }
-
-  // updateWindowTitle(data.title);
+function sortHistory(a, b) {
+  // sorting comparison method to use in sort()
+  const a_timestamp = new Date(a.modified);
+  const b_timestamp = new Date(b.modified);
+  if (a_timestamp < b_timestamp) {
+    return 1;
+  } else {
+    return -1;
+  }
 }
 
-async function getData() {
-  // return await storage.load(docId, {});
+async function loadHistory() {
+  var storageKeys = storage.keys();
+
+  for (let index = 0; index < storageKeys.length; index++) {
+    const element = storageKeys[index];
+    if (element.includes('type-to-calculate-')) {
+      historyData.push(storage.get(element));
+    }
+  }
+  historyData = historyData.sort(sortHistory);
+}
+
+async function loadData() {
+  loadHistory();
 }
 
 function setupListeners() {
@@ -296,23 +312,12 @@ function setupListeners() {
   output.addEventListener("click", onOutputClick, false);
   helpButton.addEventListener("click", onHelpClick, false);
   helpOverlay.addEventListener("click", onOverlayClick, false);
-  window.addEventListener("resize", onWindowResize);
-  // chrome.storage.onChanged.addListener(onStorageChanged);
 }
 
-// let onWindowResize = debounce(async function () {
-//   let dimensions = await win.getWindowDimensions();
-//   // let docData = await storage.load(docId, {});
-
-//   docData.width = dimensions.width;
-//   docData.height = dimensions.height;
-
-//   // await storage.save(docId, docData);
-// }, 500);
 
 async function onEditorInput() {
   parse(editor.innerText);
-  // await saveData();
+  saveData();
 }
 
 function parse(value) {
@@ -362,24 +367,20 @@ function updateOutputDisplay() {
   }
 }
 
+function generateDocID() {
+  return Math.random().toString(36).replace('0.', '');
+}
+
 let saveData = debounce(async function () {
-  // let docData = await storage.load(docId, {});
   let text = editor.innerText;
   let title = getTitle(text);
-  let date = new Date().toString();
+  let date = new Date().getTime();
 
-  if (Object.keys(docData).length <= 0) {
-    docData.id = docId;
-    docData.type = "document";
-  }
+  currentDocData.modified = date;
+  currentDocData.text = text;
+  currentDocData.title = title;
 
-  docData.modified = date;
-  docData.text = text;
-  docData.title = title;
-
-  updateWindowTitle(title);
-
-  // await storage.save(docId, docData);
+  storage.set(`type-to-calculate-${docId}`, currentDocData);
 }, 500);
 
 function getTitle(str) {
@@ -403,24 +404,6 @@ function debounce(callback, wait) {
     clearTimeout(timeout);
     timeout = setTimeout(() => callback.apply(this, args), wait);
   };
-}
-
-// async function onStorageChanged(changes) {
-//   if (changes[docId] && !document.hasFocus()) {
-//     let data = await getData();
-
-//     if (data.text) {
-//       editor.innerText = data.text;
-//     }
-//   }
-// }
-
-function updateWindowTitle(value) {
-  if (value && value.length > 0) {
-    document.title = value;
-  } else {
-    document.title = chrome.i18n.getMessage("new_document");
-  }
 }
 
 function isNotEmptyResult(item) {

@@ -3,9 +3,35 @@
   "version": "1.0.0",
   "description": "Web application to calculate day to day math as you type",
   "scripts": {
-    "build-with-parcel": "rm -rf .parcel-cache && parcel build --no-optimize",
     "build": "node esbuild.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build-with-parcel": "rm -rf .parcel-cache && parcel build --no-optimize",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "npm-watch"
+  },
+  "watch": {
+    "build": {
+      "patterns": [
+        "src",
+        "assets",
+        "locales",
+        "html",
+        "js",
+        "css"
+      ],
+      "extensions": "js,html,css,json",
+      "legacyWatch": true,
+      "delay": 2000,
+      "runOnChangeOnly": false
+    },
+    "test": {
+      "patterns": [
+        "test"
+      ],
+      "extensions": ".js",
+      "legacyWatch": true,
+      "delay": 2500,
+      "runOnChangeOnly": false
+    }
   },
   "repository": {
     "type": "git",
@@ -29,12 +55,14 @@
     "country-to-currency": "^1.1.5",
     "lodash": "^4.17.21",
     "mathjs": "^12.4.2",
-    "show-toast": "^1.1.4"
+    "show-toast": "^1.1.4",
+    "web-browser-storage": "^0.1.14"
   },
   "devDependencies": {
     "esbuild": "^0.20.2",
     "esbuild-copy-static-files": "^0.1.0",
     "fs-extra": "^11.2.0",
+    "npm-watch": "^0.12.0",
     "parcel": "^2.12.0"
   }
 }
