@@ -93,7 +93,7 @@ function onHelpClick() {
   document.getElementById("help-overlay").style.display = "block";
 }
 
-// refereed from https://stackoverflow.com/a/3866442/3967709
+// referred from https://stackoverflow.com/a/3866442/3967709
 function setEndOfContenteditable(contentEditableElement) {
   var range, selection;
   if (document.createRange)//For Firefox, Chrome, Opera, Safari, IE 9+
