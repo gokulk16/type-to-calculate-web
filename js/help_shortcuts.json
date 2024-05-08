@@ -1,10 +1,6 @@
 {
   "shortcuts": [
     {
-      "Action": "Open Type to calculate",
-      "Shortcut": "Ctrl + Shift + C"
-    },
-    {
       "Action": "Copy last result",
       "Shortcut": "Ctrl + Enter"
     },

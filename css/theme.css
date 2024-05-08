@@ -21,6 +21,8 @@
   --input-number: #c5f615;
   --input-background: #343e50;
   --output-background: #1e2b36;
+  --help-text-primary: #c5f615;
+  --help-text-secondary: #6cace4;
 }
 
 @media (prefers-color-scheme: dark) {

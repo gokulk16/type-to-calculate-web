@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
+    <meta
+      charset="utf-8"
+      name="description"
+      content="Calculate day to day math operations just using the keyboard. The Best & Fastest calculator you will need."
+    />
     <link rel="stylesheet" href="./css/theme.css" />
     <link rel="stylesheet" href="./css/editor.css" />
     <script type="module" src="./js/editor.js"></script>
@@ -32,19 +36,41 @@
         <img src="./assets/images/question-mark-icon.svg" alt="Help" />
       </div>
       <div class="help-overlay" id="help-overlay">
-        <div id="shortcut-table-container"></div>
-        <div id="operator-table-container"></div>
-        <p class="more-operators">
-          For&nbsp;
-          <a
-            class="reference-link"
-            target="_blank"
-            href="https://mathjs.org/docs/expressions/syntax.html#operators"
-          >
-            more operators</a
-          >
-        </p>
-        <div id="unit-table-container"></div>
+        <div id="help-overlay-tables">
+          <div id="shortcut-table-container"></div>
+          <div id="operator-table-container"></div>
+          <p class="more-operators">
+            For&nbsp;
+            <a
+              class="reference-link"
+              target="_blank"
+              href="https://mathjs.org/docs/expressions/syntax.html#operators"
+            >
+              more operators</a
+            >
+          </p>
+          <div id="unit-table-container"></div>
+        </div>
+        <section id="contact">
+          <h2>
+            Contact us @
+            <a class="reference-link" href="mailto:gokulkathiresan1@gmail.com"
+              >gokulkathiresan1@gmail.com</a
+            >
+          </h2>
+          <br />
+          <form name="feedback" netlify>
+            <label for="feedback">Your feedback is valuable to us:</label><br />
+            <textarea
+              id="feedback"
+              name="feedback"
+              rows="4"
+              cols="50"
+            ></textarea
+            ><br />
+            <button type="submit">Submit</button>
+          </form>
+        </section>
       </div>
     </div>
   </body>
