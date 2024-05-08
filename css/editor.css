@@ -111,7 +111,7 @@ table {
 
 th {
   text-align: left;
-  color: var(--accent-result);
+  color: var(--help-text-secondary);
   padding: 12px;
   font-weight: 420;
   font-size: 18px;
@@ -122,7 +122,7 @@ td {
   padding: 12px;
   font-weight: 300;
   font-size: 21px;
-  color: var(--input-number);
+  color: var(--help-text-primary);
 }
 
 tr:nth-child(even) {
@@ -140,5 +140,31 @@ tr:nth-child(odd) {
 }
 
 .reference-link {
-  color: var(--input-number);
+  color: var(--help-text-primary);
+}
+
+#contact {
+  padding: 20px;
+  margin-top: 20px;
+  color: var(--help-text-secondary);
+}
+
+#contact h2 {
+  margin-top: 10;
+}
+
+#contact form {
+  margin-top: 20px;
+}
+
+#contact label {
+  display: block;
+  font-weight: bold;
+}
+
+#contact textarea {
+  width: 100%;
+  resize: vertical;
+  padding: 5px;
+  border: 1px solid #ccc;
 }

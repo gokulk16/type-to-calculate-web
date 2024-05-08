@@ -17,7 +17,7 @@ let output;
 let currentDocData = {};
 let historyData = [];
 let helpButton;
-let helpOverlay;
+let helpOverlayTables;
 let conversionRates;
 let homeCurrency;
 let showHelp = false;
@@ -37,21 +37,43 @@ async function setupHomeCurrency() {
     } else if (!_.isNil(data.country)) {
       homeCurrency = currency.getHomeCurrency(data.country);
     } else {
-      throw new Error('Failed to obtain country/currency information from ipapi.co');
+      throw new Error('Failed to obtain country information from ipapi.co');
     }
   } catch (error) {
     console.error("Error while computing home currency using ipapi.co/json", error);
     try {
-      const response = await fetch('http://ip-api.com/json/');
+      const response = await fetch('https://freeipapi.com/api/json/');
       if (!response.ok) {
-        throw new Error('Failed to fetch country information from ip-api.com');
+        throw new Error('Failed to fetch country information from freeipapi.com');
       }
       const data = await response.json();
       const country = data.countryCode;
       homeCurrency = currency.getHomeCurrency(country);
     } catch {
-      console.error("Error while computing home currency using ip-api.com/json; Falling back to USD as home currency", error);
-      homeCurrency = 'USD'; // Fallback currency
+      console.error("Error while computing home currency using ip-api.com/json", error);
+      try {
+        const response = await fetch('https://ipwho.is/');
+        if (!response.ok) {
+          throw new Error('Failed to fetch country information from ipwho.is');
+        }
+        const data = await response.json();
+        const country = data.country_code;
+        homeCurrency = currency.getHomeCurrency(country);
+      } catch {
+        console.error("Error while computing home currency using ipwho.is", error);
+        try {
+          const response = await fetch('https://api.country.is/');
+          if (!response.ok) {
+            throw new Error('Failed to fetch country information from api.country.is');
+          }
+          const data = await response.json();
+          const country = data.country;
+          homeCurrency = currency.getHomeCurrency(country);
+        } catch {
+          console.error("Error while computing home currency using api.country.is; Falling back to USD as home currency.", error);
+          homeCurrency = 'USD'; // Fallback currency
+        }
+      }
     }
   } finally {
     createUnit(homeCurrency.toLowerCase());
@@ -71,10 +93,36 @@ function onHelpClick() {
   document.getElementById("help-overlay").style.display = "block";
 }
 
+// referred from https://stackoverflow.com/a/3866442/3967709
+function setEndOfContenteditable(contentEditableElement) {
+  var range, selection;
+  if (document.createRange)//For Firefox, Chrome, Opera, Safari, IE 9+
+  {
+    range = document.createRange();//Create a range (a range is a like the selection but invisible)
+    range.selectNodeContents(contentEditableElement);//Select the entire contents of the element with the range
+    range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
+    selection = window.getSelection();//get the selection object (allows you to change selection)
+    selection.removeAllRanges();//remove any selections already made
+    selection.addRange(range);//make the range you have just created the visible selection
+  }
+  else if (document.selection)//IE 8 and lower
+  {
+    range = document.body.createTextRange();//Create a range (a range is a like the selection but invisible)
+    range.moveToElementText(contentEditableElement);//Select the entire contents of the element with the range
+    range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
+    range.select();//Select the range (make it the visible selection
+  }
+}
+
+function focusEditor() {
+  editor.focus();
+  setEndOfContenteditable(editor)
+}
+
 function onOverlayClick() {
   showHelp = false;
   document.getElementById("help-overlay").style.display = "none";
-  editor.focus();
+  focusEditor();
 }
 
 async function createHelpTables() {
@@ -265,12 +313,12 @@ function useMathJs(lines) {
 
 function setupDocument() {
   editor = document.getElementById("editor");
-  editor.focus();
+  focusEditor();
   output = document.getElementById("output");
   docId = generateDocID();
   currentDocData.docId = docId;
   helpButton = document.getElementById("help-button");
-  helpOverlay = document.getElementById("help-overlay");
+  helpOverlayTables = document.getElementById("help-overlay-tables");
   createHelpTables();
   document.title = 'Type To Calculate';
 }
@@ -302,8 +350,19 @@ async function loadHistory() {
   historyData = historyData.sort(sortHistory);
 }
 
+function loadPlaceholderData() {
+  const placeholderText = '1+2\n\n';
+  if (_.isEmpty(editor.innerText)) {
+    editor.innerText = placeholderText;
+  }
+  focusEditor();
+}
+
 async function loadData() {
-  loadHistory();
+  await loadHistory();
+  if (_.isEmpty(historyData)) {
+    loadPlaceholderData();
+  }
 }
 
 function setupListeners() {
@@ -311,7 +370,7 @@ function setupListeners() {
   editor.addEventListener("keydown", onEditorKeydown, false);
   output.addEventListener("click", onOutputClick, false);
   helpButton.addEventListener("click", onHelpClick, false);
-  helpOverlay.addEventListener("click", onOverlayClick, false);
+  helpOverlayTables.addEventListener("click", onOverlayClick, false);
 }
 
 
