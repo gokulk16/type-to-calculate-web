@@ -395,6 +395,9 @@ function createHistoryElements() {
   let noOfHistoryLines = 0;
   var calculatorHistory = document.getElementById("calculator-history");
   for (let history of historyData) {
+    if (!("lines" in history)) {
+      continue;
+    }
     if (history.lines.length === 1 && history.lines[0] === "") {
       continue;
     }
@@ -432,16 +435,22 @@ function displayCalculatorHistory() {
     editor.style.maxHeight = "92vh";
     output.style.minHeight = "92vh";
     output.style.maxHeight = "92vh";
+    calculatorHistory.style.minHeight = "8vh";
+    calculatorHistory.style.maxHeight = "8vh";
   } else if (noOfHistoryLines < 10) {
     editor.style.minHeight = "85vh";
     editor.style.maxHeight = "85vh";
     output.style.minHeight = "85vh";
     output.style.maxHeight = "85vh";
+    calculatorHistory.style.minHeight = "15vh";
+    calculatorHistory.style.maxHeight = "15vh";
   } else {
     editor.style.minHeight = "70vh";
     editor.style.maxHeight = "70vh";
     output.style.minHeight = "70vh";
     output.style.maxHeight = "70vh";
+    calculatorHistory.style.minHeight = "30vh";
+    calculatorHistory.style.maxHeight = "30vh";
   }
 }
 
