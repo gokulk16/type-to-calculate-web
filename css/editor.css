@@ -28,7 +28,6 @@ body {
 }
 
 .output {
-  overflow: visible;
   border-left: 1px solid var(--tertiary);
   width: 37%;
   background-color: var(--output-background);
@@ -38,9 +37,77 @@ body {
 .output {
   padding: 8px;
   white-space: pre;
-  overflow-y: hidden;
-  overflow-x: auto;
   min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: "auto";
+}
+
+.history-editor {
+  background-color: var(--input-background);
+  appearance: none;
+  border: none;
+  outline: none;
+  resize: none;
+  width: 100%;
+  color: var(--input-number);
+}
+
+.history-output {
+  border-left: 1px solid var(--tertiary);
+  width: 37%;
+  background-color: var(--output-background);
+  flex-direction: column;
+}
+
+.history-editor,
+.history-output {
+  padding: 8px;
+}
+
+.history-result-btn {
+  height: auto;
+  border: none;
+  outline: none;
+  background-color: transparent;
+}
+
+.history-editor,
+.history-output,
+.history-result-btn {
+  font-family: var(--font-mono);
+  font-size: 21px;
+  line-height: 28px;
+}
+
+.history-result {
+  color: var(--accent-result);
+}
+
+#calculator-history {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  max-height: 30%;
+  overflow-y: auto;
+  font-size: 21px;
+  flex-direction: row;
+  border-top: 1px solid #ccc;
+}
+
+.history-label {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  line-height: 30px;
+  color: #166ec8;
+  padding: 6px;
+  border-bottom: 1px solid #f3baba;
+}
+
+#history-items {
+  border-bottom: 1px solid #f3baba;
+  flex-direction: row;
+  display: flex;
 }
 
 .result-btn {
