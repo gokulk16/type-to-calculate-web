@@ -5,8 +5,8 @@ import * as regex from "./regex.js";
 import helpOperators from "./help_operators.json";
 import helpShortcuts from "./help_shortcuts.json";
 import helpUnits from "./help_units.json";
-import { LocalStorage } from 'web-browser-storage';
-import { createUnit, unit, evaluate as mathjs_evaluate } from 'mathjs';
+import { LocalStorage } from "web-browser-storage";
+import { createUnit, unit, evaluate as mathjs_evaluate } from "mathjs";
 
 const storage = new LocalStorage();
 var showToast = require("show-toast");
@@ -15,6 +15,7 @@ var _ = require("lodash");
 let editor;
 let output;
 let currentDocData = {};
+let settingsData = {};
 let historyData = [];
 let helpButton;
 let helpOverlayTables;
@@ -27,51 +28,67 @@ document.addEventListener("DOMContentLoaded", init);
 
 async function setupHomeCurrency() {
   try {
-    const response = await fetch('https://ipapi.co/json/');
+    const response = await fetch("https://ipapi.co/json/");
     if (!response.ok) {
-      throw new Error('Failed to fetch country information');
+      throw new Error("Failed to fetch country information");
     }
     const data = await response.json();
     if (!_.isNil(data.currency)) {
-      homeCurrency = data.currency.toUpperCase()
+      homeCurrency = data.currency.toUpperCase();
     } else if (!_.isNil(data.country)) {
       homeCurrency = currency.getHomeCurrency(data.country);
     } else {
-      throw new Error('Failed to obtain country information from ipapi.co');
+      throw new Error("Failed to obtain country information from ipapi.co");
     }
   } catch (error) {
-    console.error("Error while computing home currency using ipapi.co/json", error);
+    console.error(
+      "Error while computing home currency using ipapi.co/json",
+      error
+    );
     try {
-      const response = await fetch('https://freeipapi.com/api/json/');
+      const response = await fetch("https://freeipapi.com/api/json/");
       if (!response.ok) {
-        throw new Error('Failed to fetch country information from freeipapi.com');
+        throw new Error(
+          "Failed to fetch country information from freeipapi.com"
+        );
       }
       const data = await response.json();
       const country = data.countryCode;
       homeCurrency = currency.getHomeCurrency(country);
     } catch {
-      console.error("Error while computing home currency using ip-api.com/json", error);
+      console.error(
+        "Error while computing home currency using ip-api.com/json",
+        error
+      );
       try {
-        const response = await fetch('https://ipwho.is/');
+        const response = await fetch("https://ipwho.is/");
         if (!response.ok) {
-          throw new Error('Failed to fetch country information from ipwho.is');
+          throw new Error("Failed to fetch country information from ipwho.is");
         }
         const data = await response.json();
         const country = data.country_code;
         homeCurrency = currency.getHomeCurrency(country);
       } catch {
-        console.error("Error while computing home currency using ipwho.is", error);
+        console.error(
+          "Error while computing home currency using ipwho.is",
+          error
+        );
         try {
-          const response = await fetch('https://api.country.is/');
+          const response = await fetch("https://api.country.is/");
           if (!response.ok) {
-            throw new Error('Failed to fetch country information from api.country.is');
+            throw new Error(
+              "Failed to fetch country information from api.country.is"
+            );
           }
           const data = await response.json();
           const country = data.country;
           homeCurrency = currency.getHomeCurrency(country);
         } catch {
-          console.error("Error while computing home currency using api.country.is; Falling back to USD as home currency.", error);
-          homeCurrency = 'USD'; // Fallback currency
+          console.error(
+            "Error while computing home currency using api.country.is; Falling back to USD as home currency.",
+            error
+          );
+          homeCurrency = "USD"; // Fallback currency
         }
       }
     }
@@ -96,27 +113,26 @@ function onHelpClick() {
 // referred from https://stackoverflow.com/a/3866442/3967709
 function setEndOfContenteditable(contentEditableElement) {
   var range, selection;
-  if (document.createRange)//For Firefox, Chrome, Opera, Safari, IE 9+
-  {
-    range = document.createRange();//Create a range (a range is a like the selection but invisible)
-    range.selectNodeContents(contentEditableElement);//Select the entire contents of the element with the range
-    range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
-    selection = window.getSelection();//get the selection object (allows you to change selection)
-    selection.removeAllRanges();//remove any selections already made
-    selection.addRange(range);//make the range you have just created the visible selection
-  }
-  else if (document.selection)//IE 8 and lower
-  {
-    range = document.body.createTextRange();//Create a range (a range is a like the selection but invisible)
-    range.moveToElementText(contentEditableElement);//Select the entire contents of the element with the range
-    range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
-    range.select();//Select the range (make it the visible selection
+  if (document.createRange) {
+    //For Firefox, Chrome, Opera, Safari, IE 9+
+    range = document.createRange(); //Create a range (a range is a like the selection but invisible)
+    range.selectNodeContents(contentEditableElement); //Select the entire contents of the element with the range
+    range.collapse(false); //collapse the range to the end point. false means collapse to end rather than the start
+    selection = window.getSelection(); //get the selection object (allows you to change selection)
+    selection.removeAllRanges(); //remove any selections already made
+    selection.addRange(range); //make the range you have just created the visible selection
+  } else if (document.selection) {
+    //IE 8 and lower
+    range = document.body.createTextRange(); //Create a range (a range is a like the selection but invisible)
+    range.moveToElementText(contentEditableElement); //Select the entire contents of the element with the range
+    range.collapse(false); //collapse the range to the end point. false means collapse to end rather than the start
+    range.select(); //Select the range (make it the visible selection
   }
 }
 
 function focusEditor() {
   editor.focus();
-  setEndOfContenteditable(editor)
+  setEndOfContenteditable(editor);
 }
 
 function onOverlayClick() {
@@ -180,7 +196,7 @@ function createTable(columns, data) {
 }
 
 async function setupEvaluator() {
-  await setupHomeCurrency()
+  await setupHomeCurrency();
 
   try {
     // setup conversionRates
@@ -320,7 +336,7 @@ function setupDocument() {
   helpButton = document.getElementById("help-button");
   helpOverlayTables = document.getElementById("help-overlay-tables");
   createHelpTables();
-  document.title = 'Type To Calculate';
+  document.title = "Type To Calculate";
 }
 
 function removeOverlay() {
@@ -338,20 +354,127 @@ function sortHistory(a, b) {
   }
 }
 
+function createHistoryItems(historySessionData) {
+  // Create the history editor div and its child divs
+  const historyEditor = document.createElement("div");
+  historyEditor.className = "history-editor";
+  historyEditor.id = "history-editor";
+
+  // Create the history output div
+  const historyOutput = document.createElement("div");
+  historyOutput.className = "history-output";
+  historyOutput.id = "history-output";
+
+  for (let index = 0; index < historySessionData.lines.length; index++) {
+    const line = historySessionData.lines[index];
+    const result = historySessionData.results[index];
+
+    const editorDiv = document.createElement("div");
+    if (_.isEmpty(line)) {
+      editorDiv.innerText = "\n";
+    } else {
+      editorDiv.innerText = line;
+    }
+    historyEditor.appendChild(editorDiv);
+
+    var button = document.createElement("button");
+    button.innerText = result;
+    button.classList.add("history-result-btn");
+    button.classList.add("history-result");
+    button.dataset.value = result;
+    historyOutput.appendChild(button);
+
+    let br = document.createElement("br");
+    historyOutput.appendChild(br);
+  }
+
+  return [historyEditor, historyOutput];
+}
+
+function createHistoryElements() {
+  let noOfHistoryLines = 0;
+  var calculatorHistory = document.getElementById("calculator-history");
+  for (let history of historyData) {
+    if (history.lines.length === 1 && history.lines[0] === "") {
+      continue;
+    }
+    const historyItemsElement = document.createElement("div");
+    historyItemsElement.id = "history-items";
+    calculatorHistory.appendChild(historyItemsElement);
+    let [historyItemEditor, historyItemsOutput] = createHistoryItems(history);
+    historyItemsElement.appendChild(historyItemEditor);
+    historyItemsElement.appendChild(historyItemsOutput);
+    noOfHistoryLines += history.lines.length;
+  }
+  return noOfHistoryLines;
+}
+
+function hideCalculatorHistory() {
+  var calculatorHistory = document.getElementById("calculator-history");
+  calculatorHistory.style.display = "none";
+  editor.style.minHeight = "100vh";
+  editor.style.maxHeight = "100vh";
+  output.style.minHeight = "100vh";
+  output.style.maxHeight = "100vh";
+}
+
+// Function to display calculator history
+function displayCalculatorHistory() {
+  const noOfHistoryLines = createHistoryElements();
+  if (noOfHistoryLines < 2) {
+    return;
+  }
+  var calculatorHistory = document.getElementById("calculator-history");
+  calculatorHistory.style.display = "block";
+  // to add the height based on the number of elements in history
+  if (noOfHistoryLines < 3) {
+    editor.style.minHeight = "92vh";
+    editor.style.maxHeight = "92vh";
+    output.style.minHeight = "92vh";
+    output.style.maxHeight = "92vh";
+  } else if (noOfHistoryLines < 10) {
+    editor.style.minHeight = "85vh";
+    editor.style.maxHeight = "85vh";
+    output.style.minHeight = "85vh";
+    output.style.maxHeight = "85vh";
+  } else {
+    editor.style.minHeight = "70vh";
+    editor.style.maxHeight = "70vh";
+    output.style.minHeight = "70vh";
+    output.style.maxHeight = "70vh";
+  }
+}
+
 async function loadHistory() {
   var storageKeys = storage.keys();
 
   for (let index = 0; index < storageKeys.length; index++) {
-    const element = storageKeys[index];
-    if (element.includes('type-to-calculate-')) {
-      historyData.push(storage.get(element));
+    const key = storageKeys[index];
+    if (key.includes("type-to-calculate-")) {
+      historyData.push(storage.get(key));
     }
   }
-  historyData = historyData.sort(sortHistory);
+  if (historyData) {
+    historyData = historyData.sort(sortHistory);
+  }
+  if (settingsData.showHistory) {
+    displayCalculatorHistory();
+  }
+}
+
+function toggleHistory() {
+  settingsData.showHistory = !settingsData.showHistory;
+  saveSettings();
+
+  if (settingsData.showHistory) {
+    displayCalculatorHistory();
+  } else {
+    hideCalculatorHistory();
+  }
 }
 
 function loadPlaceholderData() {
-  const placeholderText = '1+2\n\n';
+  const placeholderText = "2+1\n\n";
   if (_.isEmpty(editor.innerText)) {
     editor.innerText = placeholderText;
   }
@@ -372,7 +495,6 @@ function setupListeners() {
   helpButton.addEventListener("click", onHelpClick, false);
   helpOverlayTables.addEventListener("click", onOverlayClick, false);
 }
-
 
 async function onEditorInput() {
   parse(editor.innerText);
@@ -427,17 +549,47 @@ function updateOutputDisplay() {
 }
 
 function generateDocID() {
-  return Math.random().toString(36).replace('0.', '');
+  return Math.random().toString(36).replace("0.", "");
+}
+
+function saveSettings() {
+  storage.set(`ttc-settings`, settingsData);
+}
+
+function loadSettings() {
+  settingsData = storage.get("ttc-settings") || { showHistory: false };
 }
 
 let saveData = debounce(async function () {
-  let text = editor.innerText;
+  let text = editor.innerText || "";
   let title = getTitle(text);
   let date = new Date().getTime();
 
   currentDocData.modified = date;
-  currentDocData.text = text;
+  let lines = text.split("\n");
+  let results = evaluatedValues.map((item) => item.result);
+  let nonEmptyLines = [];
+  let nonEmptyResults = [];
+  for (let index = 0; index < lines.length; index++) {
+    if (!_.isNil(lines[index]) && lines[index] !== "") {
+      nonEmptyLines.push(lines[index]);
+      nonEmptyResults.push(results[index]);
+    } else if (
+      !_.isNil(lines[index]) &&
+      lines[index] === "" &&
+      index > 0 &&
+      lines[index - 1] !== ""
+    ) {
+      nonEmptyLines.push(lines[index]);
+      nonEmptyResults.push(results[index]);
+    } else {
+      continue;
+    }
+  }
+
   currentDocData.title = title;
+  currentDocData.lines = nonEmptyLines;
+  currentDocData.results = nonEmptyResults;
 
   storage.set(`type-to-calculate-${docId}`, currentDocData);
 }, 500);
@@ -466,7 +618,7 @@ function debounce(callback, wait) {
 }
 
 function isNotEmptyResult(item) {
-  return !_.isEmpty(item) && _.isNumber(item.result)
+  return !_.isEmpty(item) && _.isNumber(item.result);
 }
 
 // find the last not empty value from evaluatedValues
@@ -479,9 +631,9 @@ async function copyLastValue() {
   // copy the last result to clipboard
   const lastValue = findLastValue();
   if (_.isNumber(lastValue)) {
-    copyValueToClipboard(lastValue)
+    copyValueToClipboard(lastValue);
   } else {
-    showToastMessage(`No result to copy`)
+    showToastMessage(`No result to copy`);
   }
 }
 
@@ -494,6 +646,8 @@ function onEditorKeydown(e) {
     copyLastValue();
   } else if (key === "/" && (e.metaKey || e.ctrlKey)) {
     toggleHelpOverlay();
+  } else if (key === "h" && (e.metaKey || e.ctrlKey)) {
+    toggleHistory();
   }
 }
 
@@ -543,7 +697,6 @@ function getResultTokens() {
         });
         break;
       case "expression":
-
         if (isNaN(expression.result) || expression.result == null) {
           results.push({
             type: "null",
@@ -584,7 +737,6 @@ function onOutputClick(e) {
       insertNode(value);
     } else {
       copyValueToClipboard(value);
-
     }
   }
 }
@@ -592,14 +744,14 @@ async function showToastMessage(message, timeOut = 2000) {
   showToast({
     str: message,
     time: timeOut,
-    position: 'bottom'
-  })
+    position: "bottom",
+  });
 }
 
 async function copyValueToClipboard(value) {
   try {
     await navigator.clipboard.writeText(value);
-    showToastMessage(`Copied '${value}' to clipboard.`)
+    showToastMessage(`Copied '${value}' to clipboard.`);
   } catch (err) {
     alert(chrome.i18n.getMessage("clipboard_failure"));
   }
@@ -607,6 +759,7 @@ async function copyValueToClipboard(value) {
 
 async function init() {
   setupDocument();
+  await loadSettings();
   await loadData();
   await setupEvaluator();
 
