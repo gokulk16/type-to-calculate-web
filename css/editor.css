@@ -88,7 +88,7 @@ body {
   position: fixed;
   bottom: 0;
   width: 100%;
-  max-height: 30%;
+  max-height: 30vh;
   overflow-y: auto;
   font-size: 21px;
   flex-direction: row;
