@@ -456,6 +456,8 @@ async function loadHistory() {
   }
   if (historyData) {
     historyData = historyData.sort(sortHistory);
+  }
+  if (settingsData.showHistory) {
     displayCalculatorHistory();
   }
 }
@@ -757,7 +759,7 @@ async function copyValueToClipboard(value) {
 
 async function init() {
   setupDocument();
-  loadSettings();
+  await loadSettings();
   await loadData();
   await setupEvaluator();
 
