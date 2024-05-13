@@ -395,6 +395,9 @@ function createHistoryElements() {
   let noOfHistoryLines = 0;
   var calculatorHistory = document.getElementById("calculator-history");
   for (let history of historyData) {
+    if (!("lines" in history)) {
+      continue;
+    }
     if (history.lines.length === 1 && history.lines[0] === "") {
       continue;
     }
