@@ -49,7 +49,17 @@ body {
   outline: none;
   resize: none;
   width: 100%;
+  flex-direction: column;
+}
+
+.history-editor-item {
+  height: auto;
+  border: none;
+  outline: none;
+  background-color: transparent;
   color: var(--input-number);
+  font-size: 21px;
+  line-height: 28px;
 }
 
 .history-output {
@@ -92,20 +102,21 @@ body {
   overflow-y: auto;
   font-size: 21px;
   flex-direction: row;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid var(--history-accent-1);
 }
 
 .history-label {
   font-family: var(--font-mono);
   font-size: 28px;
   line-height: 30px;
-  color: #166ec8;
+  color: var(--history-accent-1);
+  background: var(--history-accent-2);
   padding: 6px;
-  border-bottom: 1px solid #f3baba;
+  border-bottom: 1px solid var(--history-accent-1);
 }
 
 #history-items {
-  border-bottom: 1px solid #f3baba;
+  border-bottom: 1px solid var(--history-accent-1);
   flex-direction: row;
   display: flex;
 }
@@ -139,7 +150,9 @@ body {
 }
 
 .result:hover,
-.variable:hover {
+.variable:hover,
+.history-result:hover,
+.history-editor-item:hover {
   text-decoration: underline;
 }
 
@@ -162,7 +175,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(17, 17, 17, 0.98); /* background with opacity */
+  background-color: var(--input-background); /* background with opacity */
   z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
   cursor: pointer; /* Add a pointer on hover */
   overflow-y: auto;
@@ -172,16 +185,17 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
   width: 100%;
-  border: 1px solid #d5cbd4;
+  border: 1px solid var(--history-accent-2);
   margin: 12px 0px 12px 0px;
 }
 
 th {
   text-align: left;
-  color: var(--help-text-secondary);
+  color: var(--history-accent-1);
   padding: 12px;
   font-weight: 420;
   font-size: 18px;
+  background: var(--history-accent-2);
 }
 
 td {
@@ -193,13 +207,13 @@ td {
 }
 
 tr:nth-child(even) {
-  background-color: #7f6c6c;
+  background-color: var(--output-background);
 }
 tr:nth-child(odd) {
-  background-color: #6a6a67;
+  background-color: var(--input-background);
 }
 .more-operators {
-  color: white;
+  color: var(--history-accent-2);
   font-size: 16px;
   display: flex;
   justify-content: center;
@@ -232,6 +246,21 @@ tr:nth-child(odd) {
 #contact textarea {
   width: 100%;
   resize: vertical;
-  padding: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--history-accent-2);
+  background-image: linear-gradient(#f1f1f1 50%, #cac8c8 50%);
+  background-size: 100% 4rem;
+  line-height: 2rem;
+  margin: 0 auto;
+  padding: 4px 8px;
+}
+
+#feedback button {
+  background: dodgerblue;
+  border-radius: 1px;
+  transition: all 0.3s cubic-bezier(0.67, 0.17, 0.4, 0.83);
+  border: none;
+}
+
+#feedback button:hover {
+  cursor: pointer;
 }

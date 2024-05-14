@@ -7,6 +7,10 @@
     {
       "Action": "Open/Close help",
       "Shortcut": "Ctrl + ?"
+    },
+    {
+      "Action": "Open/Close calculator History",
+      "Shortcut": "Ctrl + H"
     }
   ]
 }
