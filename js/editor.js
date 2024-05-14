@@ -369,12 +369,14 @@ function createHistoryItems(historySessionData) {
     const line = historySessionData.lines[index];
     const result = historySessionData.results[index];
 
-    const editorDiv = document.createElement("div");
+    const editorDiv = document.createElement("button");
+    editorDiv.className = "history-editor-item";
     if (_.isEmpty(line)) {
       editorDiv.innerText = "\n";
     } else {
       editorDiv.innerText = line;
     }
+    editorDiv.title = "Click to copy\nShift + click to copy & paste";
     historyEditor.appendChild(editorDiv);
 
     var button = document.createElement("button");
@@ -382,6 +384,7 @@ function createHistoryItems(historySessionData) {
     button.classList.add("history-result-btn");
     button.classList.add("history-result");
     button.dataset.value = result;
+    button.title = "Click to copy\nShift + click to copy & paste";
     historyOutput.appendChild(button);
 
     let br = document.createElement("br");
@@ -499,7 +502,7 @@ async function loadData() {
 
 function setupListeners() {
   editor.addEventListener("input", onEditorInput, false);
-  editor.addEventListener("keydown", onEditorKeydown, false);
+  document.addEventListener("keydown", onEditorKeydown, false);
   output.addEventListener("click", onOutputClick, false);
   helpButton.addEventListener("click", onHelpClick, false);
   helpOverlayTables.addEventListener("click", onOverlayClick, false);
@@ -648,10 +651,7 @@ async function copyLastValue() {
 
 function onEditorKeydown(e) {
   let key = e.key;
-  if (key === "Tab") {
-    e.preventDefault();
-    insertNode("\t");
-  } else if (key === "Enter" && (e.metaKey || e.ctrlKey)) {
+  if (key === "Enter" && (e.metaKey || e.ctrlKey)) {
     copyLastValue();
   } else if (key === "/" && (e.metaKey || e.ctrlKey)) {
     toggleHelpOverlay();
@@ -724,12 +724,16 @@ function getResultTokens() {
   return results;
 }
 
+function onHistoryClick(e) {
+  onOutputClick(e);
+}
+
 function onOutputClick(e) {
   let ctrlPressed;
   let shiftPressed;
   let metaPressed;
   let modifierKeyPressed = false;
-  let classes = ["result", "variable"];
+  let classes = ["result", "variable", "history-editor-item", "history-result"];
 
   try {
     ctrlPressed = e.ctrlKey;
@@ -740,7 +744,7 @@ function onOutputClick(e) {
   }
 
   if (classes.some((className) => e.target.classList.contains(className))) {
-    let value = e.target.dataset.value;
+    let value = e.target.dataset.value || e.target.innerText;
 
     if (modifierKeyPressed) {
       insertNode(value);
