@@ -49,6 +49,7 @@ body {
   outline: none;
   resize: none;
   width: 100%;
+  flex-direction: column;
 }
 
 .history-editor-item {

@@ -378,6 +378,8 @@ function createHistoryItems(historySessionData) {
     }
     editorDiv.title = "Click to copy\nShift + click to copy & paste";
     historyEditor.appendChild(editorDiv);
+    let br1 = document.createElement("br");
+    historyEditor.appendChild(br1);
 
     var button = document.createElement("button");
     button.innerText = result;
@@ -387,8 +389,8 @@ function createHistoryItems(historySessionData) {
     button.title = "Click to copy\nShift + click to copy & paste";
     historyOutput.appendChild(button);
 
-    let br = document.createElement("br");
-    historyOutput.appendChild(br);
+    let br2 = document.createElement("br");
+    historyOutput.appendChild(br2);
   }
 
   return [historyEditor, historyOutput];
@@ -506,6 +508,8 @@ function setupListeners() {
   output.addEventListener("click", onOutputClick, false);
   helpButton.addEventListener("click", onHelpClick, false);
   helpOverlayTables.addEventListener("click", onOverlayClick, false);
+  var calculatorHistory = document.getElementById("calculator-history");
+  calculatorHistory.addEventListener("click", onHistoryClick, false);
 }
 
 async function onEditorInput() {
