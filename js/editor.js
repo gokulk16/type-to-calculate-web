@@ -336,7 +336,6 @@ function setupDocument() {
   helpButton = document.getElementById("help-button");
   helpOverlayTables = document.getElementById("help-overlay-tables");
   createHelpTables();
-  document.title = "Type To Calculate";
 }
 
 function removeOverlay() {

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>Type to Calculate</title>
     <meta
-      charset="utf-8"
       name="description"
-      content="Calculate day to day math operations just using the keyboard. The Best & Fastest calculator you will need."
+      content="Type the calculations & see the results as you type. Calculate day-to-day math operations just using the keyboard. Support conversion of units like currency, length, time, area, volumne, mass, temperature. "
     />
     <link rel="stylesheet" href="./css/theme.css" />
     <link rel="stylesheet" href="./css/editor.css" />
@@ -16,6 +16,10 @@
     />
   </head>
   <body>
+    <h1 class="no-show">
+      Calculate day to day math operations just using the keyboard. The Best &
+      Fastest calculator you will need.
+    </h1>
     <div class="app">
       <div
         id="editor"
@@ -56,6 +60,26 @@
           <div id="unit-table-container"></div>
         </div>
         <section id="contact">
+          <p>
+            Source code&nbsp;
+            <a
+              class="reference-link"
+              target="_blank"
+              href="https://github.com/gokulk16/type-to-calculate-web"
+            >
+              here</a
+            >
+          </p>
+          <p>
+            Browser extension&nbsp;
+            <a
+              class="reference-link"
+              target="_blank"
+              href="https://chromewebstore.google.com/detail/type-to-calculate/fjookjcpmkeekemdfmolkfgdhgnhfphd"
+            >
+              here</a
+            >
+          </p>
           <h2>
             Contact us @
             <a class="reference-link" href="mailto:gokulkathiresan1@gmail.com"
@@ -63,7 +87,7 @@
             >
           </h2>
           <br />
-          <form id="feedback" name="feedback" netlify>
+          <form id="feedback-form" name="send-feedback" netlify>
             <label for="feedback">Your feedback is valuable to us:</label><br />
             <textarea
               id="feedback"

@@ -93,6 +93,10 @@ body {
   color: var(--accent-result);
 }
 
+.no-show {
+  display: none;
+}
+
 #calculator-history {
   display: none;
   position: fixed;
@@ -254,13 +258,13 @@ tr:nth-child(odd) {
   padding: 4px 8px;
 }
 
-#feedback button {
+#feedback-form button {
   background: dodgerblue;
   border-radius: 1px;
   transition: all 0.3s cubic-bezier(0.67, 0.17, 0.4, 0.83);
   border: none;
 }
 
-#feedback button:hover {
+#feedback-form button:hover {
   cursor: pointer;
 }
