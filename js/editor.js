@@ -9,7 +9,8 @@ import { LocalStorage } from "web-browser-storage";
 import { createUnit, unit, evaluate as mathjs_evaluate } from "mathjs";
 
 const storage = new LocalStorage();
-var showToast = require("show-toast");
+import showToast from "show-toast";
+
 var _ = require("lodash");
 
 let editor;
@@ -26,7 +27,8 @@ let evaluatedValues = []; // All evaluated expressions by line
 let docId;
 document.addEventListener("DOMContentLoaded", init);
 
-async function setupHomeCurrency() {
+export async function setupHomeCurrency() {
+  var homeCurr;
   try {
     const response = await fetch("https://ipapi.co/json/");
     if (!response.ok) {
@@ -34,9 +36,9 @@ async function setupHomeCurrency() {
     }
     const data = await response.json();
     if (!_.isNil(data.currency)) {
-      homeCurrency = data.currency.toUpperCase();
+      homeCurr = data.currency.toUpperCase();
     } else if (!_.isNil(data.country)) {
-      homeCurrency = currency.getHomeCurrency(data.country);
+      homeCurr = currency.getHomeCurrency(data.country);
     } else {
       throw new Error("Failed to obtain country information from ipapi.co");
     }
@@ -54,7 +56,7 @@ async function setupHomeCurrency() {
       }
       const data = await response.json();
       const country = data.countryCode;
-      homeCurrency = currency.getHomeCurrency(country);
+      homeCurr = currency.getHomeCurrency(country);
     } catch {
       console.error(
         "Error while computing home currency using ip-api.com/json",
@@ -67,7 +69,7 @@ async function setupHomeCurrency() {
         }
         const data = await response.json();
         const country = data.country_code;
-        homeCurrency = currency.getHomeCurrency(country);
+        homeCurr = currency.getHomeCurrency(country);
       } catch {
         console.error(
           "Error while computing home currency using ipwho.is",
@@ -82,19 +84,18 @@ async function setupHomeCurrency() {
           }
           const data = await response.json();
           const country = data.country;
-          homeCurrency = currency.getHomeCurrency(country);
+          homeCurr = currency.getHomeCurrency(country);
         } catch {
           console.error(
             "Error while computing home currency using api.country.is; Falling back to USD as home currency.",
             error
           );
-          homeCurrency = "USD"; // Fallback currency
+          homeCurr = "USD"; // Fallback currency
         }
       }
     }
-  } finally {
-    createUnit(homeCurrency.toLowerCase());
   }
+  return homeCurr;
 }
 
 function toggleHelpOverlay() {
@@ -195,9 +196,9 @@ function createTable(columns, data) {
   return table;
 }
 
-async function setupEvaluator() {
-  await setupHomeCurrency();
-
+export async function setupEvaluator() {
+  homeCurrency = await setupHomeCurrency();
+  createUnit(homeCurrency.toLowerCase());
   try {
     // setup conversionRates
     conversionRates = await currency.getConversionRates();
@@ -516,7 +517,7 @@ async function onEditorInput() {
   saveData();
 }
 
-function parse(value) {
+export function parse(value) {
   output.innerText = "";
   evaluate(value);
   updateOutputDisplay();
@@ -563,8 +564,8 @@ function updateOutputDisplay() {
   }
 }
 
-function generateDocID() {
-  return Math.random().toString(36).replace("0.", "");
+export function generateDocID() {
+  return Math.random().toString(36).replace("0.", "").substring(0, 10);
 }
 
 function saveSettings() {
@@ -669,7 +670,7 @@ function insertNode(...nodes) {
   }
 }
 
-function evaluate(value) {
+export function evaluate(value) {
   let lines = value.split("\n");
   evaluatedValues = [];
   let results = useMathJs(lines);
@@ -681,6 +682,7 @@ function evaluate(value) {
     };
     evaluatedValues[index] = result_expression;
   }
+  return evaluatedValues;
 }
 
 function getResultTokens() {
@@ -773,7 +775,7 @@ async function copyValueToClipboard(value) {
   }
 }
 
-async function init() {
+export async function init() {
   setupDocument();
   await loadSettings();
   await loadData();
