@@ -1,7 +1,7 @@
-const esbuild = require("esbuild");
-const copyStaticFiles = require("esbuild-copy-static-files");
+import * as esbuild from "esbuild";
+import copyStaticFiles from "esbuild-copy-static-files";
+import * as fsExtra from "fs-extra";
 
-const fsExtra = require("fs-extra");
 fsExtra.emptyDirSync("./dist");
 
 esbuild.build({
@@ -10,6 +10,7 @@ esbuild.build({
   bundle: true,
   minify: true,
   sourcemap: false,
+  mainFields: ["module", "main"],
   plugins: [
     copyStaticFiles({
       src: "./css",

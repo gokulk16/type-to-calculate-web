@@ -5,7 +5,8 @@
   "scripts": {
     "build": "node esbuild.js",
     "build-with-parcel": "rm -rf .parcel-cache && parcel build --no-optimize",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest",
+    "coverage": "vitest run --coverage",
     "watch": "npm-watch"
   },
   "watch": {
@@ -22,15 +23,6 @@
       "legacyWatch": true,
       "delay": 2000,
       "runOnChangeOnly": false
-    },
-    "test": {
-      "patterns": [
-        "test"
-      ],
-      "extensions": ".js",
-      "legacyWatch": true,
-      "delay": 2500,
-      "runOnChangeOnly": false
     }
   },
   "repository": {
@@ -44,6 +36,7 @@
     "calculator",
     "online calculator"
   ],
+  "type": "module",
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "author": "https://github.com/gokulk16",
   "license": "ISC",
@@ -59,10 +52,13 @@
     "web-browser-storage": "^0.1.14"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^1.6.0",
     "esbuild": "^0.20.2",
     "esbuild-copy-static-files": "^0.1.0",
     "fs-extra": "^11.2.0",
+    "jsdom": "^24.0.0",
     "npm-watch": "^0.12.0",
-    "parcel": "^2.12.0"
+    "parcel": "^2.12.0",
+    "vitest": "^1.6.0"
   }
 }
