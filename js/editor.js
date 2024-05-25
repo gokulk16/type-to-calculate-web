@@ -28,73 +28,18 @@ let docId;
 document.addEventListener("DOMContentLoaded", init);
 
 export async function setupHomeCurrency() {
+  const fallbackHomeCurrency = "USD";
   var homeCurr;
   try {
-    const response = await fetch("https://ipapi.co/json/");
-    if (!response.ok) {
-      throw new Error("Failed to fetch country information");
-    }
-    const data = await response.json();
-    if (!_.isNil(data.currency)) {
-      homeCurr = data.currency.toUpperCase();
-    } else if (!_.isNil(data.country)) {
-      homeCurr = currency.getHomeCurrency(data.country);
-    } else {
-      throw new Error("Failed to obtain country information from ipapi.co");
-    }
+    homeCurr = await currency.getHomeCurrency();
   } catch (error) {
-    console.error(
-      "Error while computing home currency using ipapi.co/json",
-      error
-    );
-    try {
-      const response = await fetch("https://freeipapi.com/api/json/");
-      if (!response.ok) {
-        throw new Error(
-          "Failed to fetch country information from freeipapi.com"
-        );
-      }
-      const data = await response.json();
-      const country = data.countryCode;
-      homeCurr = currency.getHomeCurrency(country);
-    } catch {
-      console.error(
-        "Error while computing home currency using ip-api.com/json",
-        error
-      );
-      try {
-        const response = await fetch("https://ipwho.is/");
-        if (!response.ok) {
-          throw new Error("Failed to fetch country information from ipwho.is");
-        }
-        const data = await response.json();
-        const country = data.country_code;
-        homeCurr = currency.getHomeCurrency(country);
-      } catch {
-        console.error(
-          "Error while computing home currency using ipwho.is",
-          error
-        );
-        try {
-          const response = await fetch("https://api.country.is/");
-          if (!response.ok) {
-            throw new Error(
-              "Failed to fetch country information from api.country.is"
-            );
-          }
-          const data = await response.json();
-          const country = data.country;
-          homeCurr = currency.getHomeCurrency(country);
-        } catch {
-          console.error(
-            "Error while computing home currency using api.country.is; Falling back to USD as home currency.",
-            error
-          );
-          homeCurr = "USD"; // Fallback currency
-        }
-      }
+    console.error("Error fetching home currency:", error);
+  } finally {
+    if (!homeCurr) {
+      homeCurr = fallbackHomeCurrency;
     }
   }
+
   return homeCurr;
 }
 
