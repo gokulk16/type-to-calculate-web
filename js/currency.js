@@ -107,18 +107,10 @@ async function fetchCountryInfo(url) {
 }
 
 function parseCurrency(data) {
-  console.log(
-    "🚀 ~ getHomeCurrency ~ typeof data.currency:",
-    typeof data.currency
-  );
-
   if (!_.isNil(data.currency) && typeof data.currency === "string") {
-    console.log("🚀 ~ getHomeCurrency ~ data.currency:", data.currency);
-
     return data.currency.toUpperCase();
   } else if (!_.isNil(data.country) || !_.isNil(data.countryCode)) {
     var country = data.country || data.countryCode;
-    console.log("🚀 ~ getHomeCurrency ~ country:", country);
     return getCurrency(country);
   } else {
     throw new Error("Failed to obtain country information");
