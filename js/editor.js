@@ -282,7 +282,6 @@ function setupDocument() {
   helpButton = document.getElementById("help-button");
   helpOverlayTables = document.getElementById("help-overlay-tables");
   createHelpTables();
-  console.log("🚀 ~ setupDocument ~ navigator.userAgent:", navigator.userAgent);
 
   if (navigator.userAgent.toLowerCase().includes("firefox")) {
     // since firefox browsers don't support the contenteditable="plaintext-only"
