@@ -274,6 +274,12 @@ function useMathJs(lines) {
 }
 
 function setupDocument() {
+  if (navigator.userAgent.toLowerCase().includes("firefox")) {
+    //since firefox browsers don't support the contenteditable="plaintext-only"
+    // reference: https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/contenteditable#browser_compatibility
+    // set the editor's contenteditable to true from plaintext-only
+    editor.setAttribute("contenteditable", true);
+  }
   editor = document.getElementById("editor");
   focusEditor();
   output = document.getElementById("output");
