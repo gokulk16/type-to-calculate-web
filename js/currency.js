@@ -180,4 +180,5 @@ export async function getHomeCurrency() {
       );
     }
   }
+  return homeCurr;
 }
