@@ -282,12 +282,14 @@ function setupDocument() {
   helpButton = document.getElementById("help-button");
   helpOverlayTables = document.getElementById("help-overlay-tables");
   createHelpTables();
-  // if (navigator.userAgent.toLowerCase().includes("firefox")) {
-  //   // since firefox browsers don't support the contenteditable="plaintext-only"
-  //   // reference: https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/contenteditable#browser_compatibility
-  //   // set the editor's contenteditable to true from plaintext-only
-  //   editor.setAttribute("contenteditable", true);
-  // }
+  console.log("🚀 ~ setupDocument ~ navigator.userAgent:", navigator.userAgent);
+
+  if (navigator.userAgent.toLowerCase().includes("firefox")) {
+    // since firefox browsers don't support the contenteditable="plaintext-only"
+    // reference: https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/contenteditable#browser_compatibility
+    // set the editor's contenteditable to true from plaintext-only
+    editor.setAttribute("contenteditable", "true");
+  }
 }
 
 function removeOverlay() {
