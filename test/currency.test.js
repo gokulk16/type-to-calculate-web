@@ -1,13 +1,13 @@
-import { getHomeCurrency, getConversionRates } from "../js/currency";
+import { getCurrency, getConversionRates } from "../js/currency";
 import { expect, test } from "vitest";
 
 test("get Home Currency given the country", () => {
-  const curr = getHomeCurrency("US");
+  const curr = getCurrency("US");
   expect(curr).toBe("USD");
 });
 
 test("get Home Currency given the country", () => {
-  const curr = getHomeCurrency("IN");
+  const curr = getCurrency("IN");
   expect(curr).toBe("INR");
 });
 
