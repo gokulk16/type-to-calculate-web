@@ -6,6 +6,7 @@
     "build": "node esbuild.js",
     "test": "vitest",
     "coverage": "vitest run --coverage",
+    "coverage-summary": "vitest run --coverage.enabled --reporter=json --coverage.reporter=json-summary",
     "watch": "npm-watch"
   },
   "watch": {
