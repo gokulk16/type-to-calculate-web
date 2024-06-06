@@ -4,6 +4,8 @@ import {
   evaluate,
   loadPlaceholderData,
   copyLastValue,
+  convertXToMultiplication,
+  getTitle,
 } from "../js/editor";
 import { describe, it, expect, vi, test } from "vitest";
 
@@ -195,5 +197,61 @@ describe("testing copyLastValue", () => {
     global.evaluatedValues = [{ result: 21 }, { result: "" }];
     await copyLastValue(global.evaluatedValues);
     expect(navigator.clipboard.writeText).toHaveBeenCalled(21);
+  });
+});
+
+describe("testing convertXToMultiplication", () => {
+  test("Convert all 'x' to multiplication operator", () => {
+    const lines = [
+      "2x3",
+      "2 x 3",
+      "2x 3",
+      "2 x3",
+      "2x data",
+      "data x 2",
+      "2x2x2x4x1.7x0.41",
+    ];
+    const convertedLines = convertXToMultiplication(lines);
+
+    expect(convertedLines).toEqual([
+      "2*3",
+      "2 * 3",
+      "2* 3",
+      "2 *3",
+      "2* data",
+      "data * 2",
+      "2*2*2*4*1.7*0.41",
+    ]);
+  });
+
+  test("Dont convert some 'x' to multiplication operator in expressions", () => {
+    const lines = ["2xdata", "0x90 x 2", "0x90x 2", "x22e x2x4x1.7x0.41"];
+    const convertedLines = convertXToMultiplication(lines);
+
+    expect(convertedLines).toEqual([
+      "2xdata",
+      "0x90 * 2",
+      "0x90* 2",
+      "x22e *2*4*1.7*0.41",
+    ]);
+  });
+});
+
+describe("testing getTitle", () => {
+  test("Return full string when length is less than or equal to 30", () => {
+    const result = getTitle("This is a short string");
+    expect(result).toBe("This is a short string");
+  });
+
+  test("Return substring up to 30 characters with last word when length exceeds 30", () => {
+    const result = getTitle(
+      "This is a longer string that exceeds 30 characters"
+    );
+    expect(result).toBe("This is a longer string that");
+  });
+
+  test("Return full string when no spaces found within the first 30 characters", () => {
+    const result = getTitle("ThisIsAStringWithNoSpacesWithinFirst30Characters");
+    expect(result).toBe("ThisIsAStringWithNoSpacesWithi");
   });
 });
