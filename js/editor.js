@@ -190,7 +190,7 @@ function removeMatches(supersetArray, removeArray) {
 function replaceFirstXAfterIndex(str, index) {
   return str.substring(0, index) + str.substring(index).replace("x", "*");
 }
-function convertXToMultiplication(lines) {
+export function convertXToMultiplication(lines) {
   for (let i = 0; i < lines.length; i++) {
     // Converting 'x' as a mutiplication operator.
     // for these examples: 'data x 2', 'data x2', '2x2', '2 x2', '2x 2', '2 x 2', '2x data', '2 x data', '2x2x2', data x 2 x data', '2x2x2 x2 x x2 x2 x2 x 2 x 22'
@@ -575,7 +575,7 @@ let saveData = debounce(async function () {
   storage.set(`type-to-calculate-${docId}`, currentDocData);
 }, 500);
 
-function getTitle(str) {
+export function getTitle(str) {
   if (str.length <= 0) return str;
   let maxLength = 30;
   str = str.trim();
