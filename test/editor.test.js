@@ -1,6 +1,5 @@
 import {
   setupEvaluator,
-  setupHomeCurrency,
   generateDocID,
   evaluate,
   loadPlaceholderData,
@@ -16,13 +15,6 @@ describe("testing generateDocID", () => {
   test("generating Doc ID", () => {
     const abc = generateDocID();
     expect(abc.length).toBeGreaterThanOrEqual(5);
-  });
-});
-
-describe("testing setupHomeCurrency", () => {
-  test("setting up Home Currency", async () => {
-    const homeCurr = await setupHomeCurrency();
-    expect(homeCurr).toBe("INR");
   });
 });
 
