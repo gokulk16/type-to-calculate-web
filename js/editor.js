@@ -10,7 +10,6 @@ import { createUnit, unit, evaluate as mathjs_evaluate } from "mathjs";
 
 const storage = new LocalStorage();
 import showToast from "show-toast";
-
 var _ = require("lodash");
 
 let editor;
@@ -175,8 +174,10 @@ export async function setupEvaluator() {
         }
       }
     });
+    loadPlaceholderData(true);
   } catch (error) {
     console.error("Error setting up currency tokens:", error);
+    loadPlaceholderData(false);
   }
 }
 
@@ -439,8 +440,18 @@ function toggleHistory() {
   }
 }
 
-function loadPlaceholderData() {
-  const placeholderText = "2+1\n\n";
+function loadPlaceholderData(currencyConversionsLoaded) {
+  //show placeholder only when no history .i.e., no previous usage of our app
+  if (!_.isEmpty(historyData)) {
+    focusEditor();
+    return;
+  }
+  let placeholderText = "2+1\n12x3\n3miles to km\ndata = 12\ndata+5\n";
+  if (currencyConversionsLoaded) {
+    placeholderText += "10usd to inr";
+  }
+  placeholderText += "\n\n";
+
   if (_.isEmpty(editor.innerText)) {
     editor.innerText = placeholderText;
   }
@@ -449,9 +460,6 @@ function loadPlaceholderData() {
 
 async function loadData() {
   await loadHistory();
-  if (_.isEmpty(historyData)) {
-    loadPlaceholderData();
-  }
 }
 
 function setupListeners() {
