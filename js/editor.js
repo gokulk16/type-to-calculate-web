@@ -10,7 +10,6 @@ import { createUnit, unit, evaluate as mathjs_evaluate } from "mathjs";
 
 const storage = new LocalStorage();
 import showToast from "show-toast";
-
 var _ = require("lodash");
 
 let editor;
@@ -144,6 +143,7 @@ function createTable(columns, data) {
 export async function setupEvaluator() {
   homeCurrency = await setupHomeCurrency();
   createUnit(homeCurrency.toLowerCase());
+  let currencyUnitsAdded = false;
   try {
     // setup conversionRates
     conversionRates = await currency.getConversionRates();
@@ -175,9 +175,11 @@ export async function setupEvaluator() {
         }
       }
     });
+    currencyUnitsAdded = true;
   } catch (error) {
     console.error("Error setting up currency tokens:", error);
   }
+  return currencyUnitsAdded;
 }
 
 function removeMatches(supersetArray, removeArray) {
@@ -439,19 +441,30 @@ function toggleHistory() {
   }
 }
 
-function loadPlaceholderData() {
-  const placeholderText = "2+1\n\n";
-  if (_.isEmpty(editor.innerText)) {
-    editor.innerText = placeholderText;
+export function loadPlaceholderData(
+  editorElement,
+  history,
+  currencyConversionsLoaded
+) {
+  //show placeholder only when no history .i.e., no previous usage of our app
+  if (!_.isEmpty(history)) {
+    return;
   }
-  focusEditor();
+  let placeholderText = "2+1\n12x3\n3miles to km\ndata = 12\ndata+5\n";
+  if (currencyConversionsLoaded) {
+    placeholderText += "10 usd to inr";
+  }
+  placeholderText += "\n\n";
+
+  if (_.isEmpty(editorElement.innerText)) {
+    editorElement.innerText = placeholderText;
+  }
+
+  return placeholderText;
 }
 
 async function loadData() {
   await loadHistory();
-  if (_.isEmpty(historyData)) {
-    loadPlaceholderData();
-  }
 }
 
 function setupListeners() {
@@ -590,14 +603,14 @@ function isNotEmptyResult(item) {
 }
 
 // find the last not empty value from evaluatedValues
-function findLastValue() {
-  let lastValue = evaluatedValues.findLast(isNotEmptyResult);
+function findLastValue(values) {
+  let lastValue = values.findLast(isNotEmptyResult);
   return lastValue ? lastValue.result : null;
 }
 
-async function copyLastValue() {
+export async function copyLastValue(values) {
   // copy the last result to clipboard
-  const lastValue = findLastValue();
+  const lastValue = findLastValue(values);
   if (_.isNumber(lastValue)) {
     copyValueToClipboard(lastValue);
   } else {
@@ -608,7 +621,7 @@ async function copyLastValue() {
 function onEditorKeydown(e) {
   let key = e.key;
   if (key === "Enter" && (e.metaKey || e.ctrlKey)) {
-    copyLastValue();
+    copyLastValue(evaluatedValues);
   } else if (key === "/" && (e.metaKey || e.ctrlKey)) {
     toggleHelpOverlay();
   } else if (key === "h" && (e.metaKey || e.ctrlKey)) {
@@ -731,8 +744,9 @@ export async function init() {
   setupDocument();
   await loadSettings();
   await loadData();
-  await setupEvaluator();
-
+  let currencyUnitsAdded = await setupEvaluator();
+  loadPlaceholderData(editor, historyData, currencyUnitsAdded);
+  focusEditor();
   setupListeners();
   evaluate(editor.innerText);
   updateOutputDisplay();
