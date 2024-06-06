@@ -77,7 +77,7 @@ export async function getConversionRates() {
       const conversionRate =
         (amountToConvert / currencies[baseCurrency]) *
         currencies[targetCurrency];
-      convertedRates[baseCurrency][targetCurrency] = conversionRate;
+      _.set(convertedRates, [baseCurrency, targetCurrency], conversionRate);
     });
   });
 
