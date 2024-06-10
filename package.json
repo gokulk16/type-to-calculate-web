@@ -45,6 +45,7 @@
   "dependencies": {
     "@sentry/browser": "^8.8.0",
     "@sentry/esbuild-plugin": "^2.18.0",
+    "braces": "3.0.3",
     "country-to-currency": "^1.1.5",
     "lodash": "^4.17.21",
     "mathjs": "^12.4.2",
