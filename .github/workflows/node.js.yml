@@ -34,8 +34,8 @@ jobs:
         run: npm ci
       - name: "Build"
         run: npm run build
-      - name: "Test"
-        run: npm run coverage-summary
+      - name: "Run Tests & Coverage"
+        run: npm run test
       - name: "Upload Coverage"
         uses: actions/upload-artifact@v4
         with:
