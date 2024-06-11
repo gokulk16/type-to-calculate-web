@@ -4,10 +4,13 @@ import {
   evaluate,
   loadPlaceholderData,
   copyLastValue,
-  convertXToMultiplication,
   getTitle,
-} from "../js/editor";
-import { describe, it, expect, vi, test } from "vitest";
+  initSentry,
+  saveData,
+  parse,
+} from "./editor";
+import { describe, it, expect, vi, test, beforeEach } from "vitest";
+import * as Sentry from "@sentry/browser";
 
 // AAA Principle to write a test case: Arrange, Act, Assert
 
@@ -193,47 +196,10 @@ describe("testing copyLastValue", () => {
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(42);
   });
 
-  it("should not attempt to copy when no numeric results are available", async () => {
+  it("should copy the recent non empty vaue if available", async () => {
     global.evaluatedValues = [{ result: 21 }, { result: "" }];
     await copyLastValue(global.evaluatedValues);
     expect(navigator.clipboard.writeText).toHaveBeenCalled(21);
-  });
-});
-
-describe("testing convertXToMultiplication", () => {
-  test("Convert all 'x' to multiplication operator", () => {
-    const lines = [
-      "2x3",
-      "2 x 3",
-      "2x 3",
-      "2 x3",
-      "2x data",
-      "data x 2",
-      "2x2x2x4x1.7x0.41",
-    ];
-    const convertedLines = convertXToMultiplication(lines);
-
-    expect(convertedLines).toEqual([
-      "2*3",
-      "2 * 3",
-      "2* 3",
-      "2 *3",
-      "2* data",
-      "data * 2",
-      "2*2*2*4*1.7*0.41",
-    ]);
-  });
-
-  test("Dont convert some 'x' to multiplication operator in expressions", () => {
-    const lines = ["2xdata", "0x90 x 2", "0x90x 2", "x22e x2x4x1.7x0.41"];
-    const convertedLines = convertXToMultiplication(lines);
-
-    expect(convertedLines).toEqual([
-      "2xdata",
-      "0x90 * 2",
-      "0x90* 2",
-      "x22e *2*4*1.7*0.41",
-    ]);
   });
 });
 
@@ -253,5 +219,48 @@ describe("testing getTitle", () => {
   test("Return full string when no spaces found within the first 30 characters", () => {
     const result = getTitle("ThisIsAStringWithNoSpacesWithinFirst30Characters");
     expect(result).toBe("ThisIsAStringWithNoSpacesWithi");
+  });
+});
+
+vi.mock("@sentry/browser", () => ({
+  init: vi.fn(),
+  browserTracingIntegration: vi.fn(),
+  replayIntegration: vi.fn(),
+}));
+
+describe("Testing initSentry", () => {
+  it("should initialize Sentry with the correct configuration", () => {
+    initSentry();
+
+    expect(Sentry.init).toHaveBeenCalledWith({
+      dsn: "https://f6181e1f6794abaf08674441d2c08403@o4507406315159552.ingest.de.sentry.io/4507406320992336",
+      integrations: [
+        Sentry.browserTracingIntegration(),
+        Sentry.replayIntegration(),
+      ],
+      tracesSampleRate: 1.0,
+      tracePropagationTargets: ["localhost", /^https:\/\/typetocalculate\.in/],
+      replaysSessionSampleRate: 0.1,
+      replaysOnErrorSampleRate: 1.0,
+    });
+  });
+});
+
+describe("testing parse", () => {
+  beforeEach(() => {
+    document.body.innerHTML = `
+      <div id="editor" contenteditable="true">1+1</div>
+      <div id="output">3</div>
+    `;
+    global.editor = document.getElementById("editor");
+    global.output = document.getElementById("output");
+  });
+
+  it("should update the output value to 4", async () => {
+    editor.innerText = "2+2";
+
+    parse(editor.innerText, output);
+    await new Promise(setImmediate); // Wait for async operations
+    expect(output.querySelectorAll("button")[0].innerText).toBe("4");
   });
 });

@@ -2,7 +2,7 @@
 import * as Sentry from "@sentry/browser";
 import * as currency from "./currency.js";
 import { createHelpTables } from "./help_page.js";
-import * as regex from "./regex.js";
+import { convertXToMultiplication } from "./utils/convert_x_to_multiply.js";
 import showToast from "show-toast";
 import { LocalStorage } from "web-browser-storage";
 import { createUnit, unit, evaluate as mathjs_evaluate } from "mathjs";
@@ -123,52 +123,6 @@ export async function setupEvaluator() {
     console.error("Error setting up currency tokens:", error);
   }
   return currencyUnitsAdded;
-}
-
-function removeMatches(supersetArray, removeArray) {
-  let result = supersetArray.filter((match) => !removeArray.includes(match));
-  return result;
-}
-
-function replaceFirstXAfterIndex(str, index) {
-  return str.substring(0, index) + str.substring(index).replace("x", "*");
-}
-export function convertXToMultiplication(lines) {
-  for (let i = 0; i < lines.length; i++) {
-    // Converting 'x' as a mutiplication operator.
-    // for these examples: 'data x 2', 'data x2', '2x2', '2 x2', '2x 2', '2 x 2', '2x data', '2 x data', '2x2x2', data x 2 x data', '2x2x2 x2 x x2 x2 x2 x 2 x 22'
-    // then convert the 'x' to '*' in that line
-    // for these examples: '0x90 x 2', '0x90 x2', '0x90 x 2'
-    // then convert them to '0x90 * 2', '0x90 *2', '0x90 * 2' since here 0x represents hexadecimal value
-
-    let matchesOfX = [...lines[i].matchAll(regex.X_IN_EXPRESSION)];
-    let matchesOfHexa = [...lines[i].matchAll(regex.HEXADECIMAL_VALUE)];
-
-    let XIndices = matchesOfX.map((ele) => ele.index);
-    let HexaIndices = matchesOfHexa.map((ele) => ele.index);
-
-    let filteredMatches = removeMatches(XIndices, HexaIndices);
-    // filteredMatches contains all the indexes where the x will be present on or after the index
-
-    for (let index = 0; index < filteredMatches.length; index++) {
-      lines[i] = replaceFirstXAfterIndex(lines[i], filteredMatches[index]);
-    }
-
-    // if line still matches with regex.X_IN_EXPRESSION then go through the same operations once again
-    let confirmMatchesOfX = [...lines[i].matchAll(regex.X_IN_EXPRESSION)];
-
-    if (!_.isEmpty(confirmMatchesOfX)) {
-      matchesOfHexa = [...lines[i].matchAll(regex.HEXADECIMAL_VALUE)];
-
-      XIndices = confirmMatchesOfX.map((ele) => ele.index);
-      HexaIndices = matchesOfHexa.map((ele) => ele.index);
-      filteredMatches = removeMatches(XIndices, HexaIndices);
-      for (let index = 0; index < filteredMatches.length; index++) {
-        lines[i] = replaceFirstXAfterIndex(lines[i], filteredMatches[index]);
-      }
-    }
-  }
-  return lines;
 }
 
 function useMathJs(lines) {
@@ -421,17 +375,17 @@ function setupListeners() {
 }
 
 async function onEditorInput() {
-  parse(editor.innerText);
+  parse(editor.innerText, output);
   saveData();
 }
 
-export function parse(value) {
-  output.innerText = "";
+export function parse(value, outputElement) {
+  outputElement.innerText = "";
   evaluate(value);
-  updateOutputDisplay();
+  updateOutputDisplay(outputElement);
 }
 
-function updateOutputDisplay() {
+function updateOutputDisplay(outputElement) {
   let results = getResultTokens();
 
   for (const [i, result] of results.entries()) {
@@ -455,19 +409,19 @@ function updateOutputDisplay() {
         button.classList.add("result-btn");
         button.classList.add(result.type);
         button.dataset.value = result.value;
-        output.appendChild(button);
+        outputElement.appendChild(button);
         break;
       case "error":
         span = document.createElement("span");
         span.innerText = chrome.i18n.getMessage("error");
         span.setAttribute("title", value);
         span.classList.add(result.type);
-        output.appendChild(span);
+        outputElement.appendChild(span);
         break;
     }
 
     if (len > i + 1) {
-      output.appendChild(br);
+      outputElement.appendChild(br);
     }
   }
 }
@@ -484,7 +438,7 @@ function loadSettings() {
   settingsData = storage.get("ttc-settings") || { showHistory: false };
 }
 
-let saveData = debounce(async function () {
+export let saveData = debounce(async function () {
   let text = editor.innerText || "";
   let title = getTitle(text);
   let date = new Date().getTime();
@@ -683,7 +637,7 @@ async function copyValueToClipboard(value) {
   }
 }
 
-function initSentry() {
+export function initSentry() {
   Sentry.init({
     dsn: "https://f6181e1f6794abaf08674441d2c08403@o4507406315159552.ingest.de.sentry.io/4507406320992336",
     integrations: [
@@ -710,6 +664,6 @@ export async function init() {
   focusEditor();
   setupListeners();
   evaluate(editor.innerText);
-  updateOutputDisplay();
+  updateOutputDisplay(output);
   removeOverlay();
 }
