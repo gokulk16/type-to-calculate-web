@@ -6,7 +6,6 @@ import {
   copyLastValue,
   getTitle,
   initSentry,
-  saveData,
   parse,
 } from "./editor";
 import { describe, it, expect, vi, test, beforeEach } from "vitest";

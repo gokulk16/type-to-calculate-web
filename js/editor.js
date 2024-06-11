@@ -438,7 +438,7 @@ function loadSettings() {
   settingsData = storage.get("ttc-settings") || { showHistory: false };
 }
 
-export let saveData = debounce(async function () {
+let saveData = debounce(async function () {
   let text = editor.innerText || "";
   let title = getTitle(text);
   let date = new Date().getTime();

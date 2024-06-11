@@ -71,27 +71,3 @@ jobs:
         uses: davelosert/vitest-coverage-report-action@v2
         with:
           json-summary-compare-path: coverage-main/coverage-summary.json
-
-  # coverage-badge:
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       node-version: [20.x]
-  #       branch:
-  #         - ${{ github.head_ref }}
-  #         - "main"
-  #   steps:
-  #     - name: Get Coverage summary for badge
-  #       id: coverage-summary
-  #       run: echo "value=$(jq -r '.total.lines.pct|tostring + "%"' coverage/coverage-summary.json)" >> $GITHUB_OUTPUT
-  #     - name: Update coverage badge JSON gist
-  #       uses: schneegans/dynamic-badges-action@v1.7.0
-  #       with:
-  #         auth: ${{ secrets.GIST_SECRET }}
-  #         gistID: ba8810278ef57a8ae9243e3edf9f43b8
-  #         filename: coverage-${{ github.head_ref }}.json
-  #         label: Coverage
-  #         message: ${{ steps.coverage-summary.outputs.value }}
-  #         color: green
-  #         namedLogo: vitest
-  #         forceUpdate: true
