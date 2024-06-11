@@ -43,6 +43,8 @@ jobs:
           gist-token: ${{ secrets.GIST_SECRET }} # if you want to upload badge to gist
           gist-url: https://gist.github.com/gokulk16/eaf6c29242b70728224cc81c3f9ba750
           upload-badge: true
+          badge-text: "coverage"
+          badge-path: "badge-${{ github.event.repository.name }}-${{ matrix.branch }}.svg"
       - name: "Upload Coverage"
         uses: actions/upload-artifact@v4
         with:
