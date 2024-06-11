@@ -1,4 +1,4 @@
-import { getCurrency, getConversionRates } from "../js/currency";
+import { getCurrency, getConversionRates } from "./currency";
 import { expect, test } from "vitest";
 
 test("get Home Currency given the country", () => {

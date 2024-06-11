@@ -1,4 +1,4 @@
-import { createHelpTables } from "../js/help_page";
+import { createHelpTables } from "./help_page";
 import { describe, it, expect } from "vitest";
 import path from "path";
 import fs from "fs";
