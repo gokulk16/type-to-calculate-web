@@ -4,6 +4,8 @@ Webapp is deployed [here](https://typetocalculate.netlify.app/)
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/4c3aa90c-d121-454b-b8c3-ae78a6eaf738/deploy-status)](https://app.netlify.com/sites/typetocalculate/deploys)
 ![Known Vulnerabilities](https://snyk.io/test/github/gokulk16/type-to-calculate-web/badge.svg)
+![Coverage Badge](https://gist.githubusercontent.com/gokulk16/eaf6c29242b70728224cc81c3f9ba750/raw/badge-type-to-calculate-web-main.svg)
+
 
 Just type from the keyboard and do the math. No need to open the calculator.
 
