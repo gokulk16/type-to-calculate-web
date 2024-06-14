@@ -268,3 +268,10 @@ tr:nth-child(odd) {
 #feedback-form button:hover {
   cursor: pointer;
 }
+
+.how-to-use {
+  display: block;
+  text-align: center;
+  font-size: 24px;
+  color: #6cace4;
+}

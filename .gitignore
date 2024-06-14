@@ -4,6 +4,6 @@ node_modules
 .parcel-cache/
 coverage
 .nyc_output
-
+**/.DS_Store
 # Sentry Config File
 .env.sentry-build-plugin
