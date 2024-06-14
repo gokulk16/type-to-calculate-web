@@ -505,24 +505,25 @@ function findLastValue(values) {
   return lastValue ? lastValue.result : null;
 }
 
-export async function copyLastValue(values, paste = false) {
+export async function copyLastValue(values) {
   // copy the last result to clipboard
   const lastValue = findLastValue(values);
   if (_.isNumber(lastValue)) {
     copyValueToClipboard(lastValue);
-    if (paste) {
-      insertNode(lastValue);
-    }
+    return lastValue;
   } else {
     showToastMessage(`No result to copy`);
   }
 }
 
-function onEditorKeydown(e) {
+export function onEditorKeydown(e) {
   let key = e.key;
   // Order of below conditions matter since there is subset condition
   if (key === "Enter" && e.shiftKey && (e.metaKey || e.ctrlKey)) {
-    copyLastValue(evaluatedValues, true);
+    let lastValue = copyLastValue(evaluatedValues);
+    if (lastValue) {
+      insertNode(lastValue);
+    }
   } else if (key === "Enter" && (e.metaKey || e.ctrlKey)) {
     copyLastValue(evaluatedValues);
   } else if (key === "/" && (e.metaKey || e.ctrlKey)) {
@@ -542,7 +543,7 @@ function is_total_keywords(word) {
   return ["total", "sum", "="].includes(word.toLowerCase().trim());
 }
 
-function post_process(inputs, outputs) {
+export function postProcess(inputs, outputs) {
   if (inputs.length === 0) {
     return outputs;
   }
@@ -571,7 +572,7 @@ export function evaluate(value) {
   let lines = value.split("\n");
   evaluatedValues = [];
   let results = useMathJs(lines);
-  results = post_process(lines, results);
+  results = postProcess(lines, results);
   for (let index = 0; index < results.length; index++) {
     const result_expression = {
       type: "expression",
