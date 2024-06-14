@@ -505,11 +505,14 @@ function findLastValue(values) {
   return lastValue ? lastValue.result : null;
 }
 
-export async function copyLastValue(values) {
+export async function copyLastValue(values, paste = false) {
   // copy the last result to clipboard
   const lastValue = findLastValue(values);
   if (_.isNumber(lastValue)) {
     copyValueToClipboard(lastValue);
+    if (paste) {
+      insertNode(lastValue);
+    }
   } else {
     showToastMessage(`No result to copy`);
   }
@@ -517,7 +520,10 @@ export async function copyLastValue(values) {
 
 function onEditorKeydown(e) {
   let key = e.key;
-  if (key === "Enter" && (e.metaKey || e.ctrlKey)) {
+  // Order of below conditions matter since there is subset condition
+  if (key === "Enter" && e.shiftKey && (e.metaKey || e.ctrlKey)) {
+    copyLastValue(evaluatedValues, true);
+  } else if (key === "Enter" && (e.metaKey || e.ctrlKey)) {
     copyLastValue(evaluatedValues);
   } else if (key === "/" && (e.metaKey || e.ctrlKey)) {
     toggleHelpOverlay();
@@ -532,10 +538,40 @@ function insertNode(...nodes) {
   }
 }
 
+function is_total_keywords(word) {
+  return ["total", "sum", "="].includes(word.toLowerCase().trim());
+}
+
+function post_process(inputs, outputs) {
+  if (inputs.length === 0) {
+    return outputs;
+  }
+  // confirm if input length and output length
+  if (inputs.length !== outputs.length) {
+    console.error(
+      "Post Processing failed. Input and Output lengths must be same."
+    );
+    return outputs;
+  }
+  // processing for total keyword
+  let total = 0;
+  for (let index = 0; index < outputs.length; index++) {
+    if (typeof outputs[index] === "number") {
+      total += outputs[index];
+    }
+
+    if (is_total_keywords(inputs[index])) {
+      outputs[index] = total;
+    }
+  }
+  return outputs;
+}
+
 export function evaluate(value) {
   let lines = value.split("\n");
   evaluatedValues = [];
   let results = useMathJs(lines);
+  results = post_process(lines, results);
   for (let index = 0; index < results.length; index++) {
     const result_expression = {
       type: "expression",
@@ -637,7 +673,7 @@ async function copyValueToClipboard(value) {
   }
 }
 
-export function initSentry() {
+export async function initSentry() {
   Sentry.init({
     dsn: "https://f6181e1f6794abaf08674441d2c08403@o4507406315159552.ingest.de.sentry.io/4507406320992336",
     integrations: [

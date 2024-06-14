@@ -1,8 +1,12 @@
 {
   "shortcuts": [
     {
-      "Action": "Copy last result",
-      "Shortcut": "Ctrl + Enter"
+      "Action": "Paste the last result",
+      "Shortcut": "Ctrl + Shift + Enter / Command + Shift + Enter"
+    },
+    {
+      "Action": "Copy the last result",
+      "Shortcut": "Ctrl + Enter / Command + Enter"
     },
     {
       "Action": "Open/Close help",
