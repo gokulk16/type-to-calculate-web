@@ -516,7 +516,7 @@ export async function copyLastValue(values) {
   }
 }
 
-export function onEditorKeydown(e) {
+function onEditorKeydown(e) {
   let key = e.key;
   // Order of below conditions matter since there is subset condition
   if (key === "Enter" && e.shiftKey && (e.metaKey || e.ctrlKey)) {
@@ -539,33 +539,37 @@ function insertNode(...nodes) {
   }
 }
 
-function is_total_keywords(word) {
+function isTotalKeyword(word) {
   return ["total", "sum", "="].includes(word.toLowerCase().trim());
 }
 
 export function postProcess(inputs, outputs) {
-  if (inputs.length === 0) {
-    return outputs;
-  }
-  // confirm if input length and output length
-  if (inputs.length !== outputs.length) {
-    console.error(
-      "Post Processing failed. Input and Output lengths must be same."
-    );
-    return outputs;
-  }
-  // processing for total keyword
-  let total = 0;
-  for (let index = 0; index < outputs.length; index++) {
-    if (typeof outputs[index] === "number") {
-      total += outputs[index];
+  try {
+    if (inputs.length === 0) {
+      return outputs;
     }
+    // confirm if input length and output length
+    if (inputs.length !== outputs.length) {
+      console.error(
+        "Post Processing failed. Input and Output lengths must be same."
+      );
+      return outputs;
+    }
+    // processing for total keyword
+    let total = 0;
+    for (let index = 0; index < outputs.length; index++) {
+      if (typeof outputs[index] === "number") {
+        total += outputs[index];
+      }
 
-    if (is_total_keywords(inputs[index])) {
-      outputs[index] = total;
+      if (isTotalKeyword(inputs[index])) {
+        outputs[index] = total;
+      }
     }
+    return outputs;
+  } catch {
+    return outputs;
   }
-  return outputs;
 }
 
 export function evaluate(value) {

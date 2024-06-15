@@ -282,7 +282,7 @@ describe("testing parse", () => {
 
 describe("testing postProcess", () => {
   it("should return outputs when inputs and outputs lengths are equal", () => {
-    const inputs = ["2", "total", "3"];
+    const inputs = ["2", "=", "3"];
     const outputs = [2, "", 3];
     const result = postProcess(inputs, outputs);
     expect(result).toEqual([2, 2, 3]);
@@ -296,7 +296,7 @@ describe("testing postProcess", () => {
   });
 
   it("should handle different lengths of inputs and outputs", () => {
-    const inputs = ["2", "total", "3"];
+    const inputs = ["2", "sum", "3"];
     const outputs = [2, 5];
     const result = postProcess(inputs, outputs);
     expect(result).toEqual([2, 5]);
