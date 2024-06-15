@@ -6,6 +6,7 @@ import {
   copyLastValue,
   getTitle,
   initSentry,
+  postProcess,
   parse,
 } from "./editor";
 import { describe, it, expect, vi, test, beforeEach } from "vitest";
@@ -137,6 +138,21 @@ describe("testing evaluate", () => {
     const evalValues = await evaluate("data=10+10-1\ndata +2.5-0.50001x1.1");
     expect(evalValues[1].result).toBeCloseTo(20.949);
   });
+
+  test("Evaluate multi-line with total keyword 1: = ", async () => {
+    const evalValues = await evaluate("data=10\n+10-1\ndata +2.5-0.50\n=");
+    expect(evalValues[3].result).toBeCloseTo(31);
+  });
+
+  test("Evaluate multi-line with total keyword 2: total ", async () => {
+    const evalValues = await evaluate("10\n+10-1\n10x3\ntotal");
+    expect(evalValues[3].result).toBeCloseTo(49);
+  });
+
+  test("Evaluate multi-line with total keyword 3: sum ", async () => {
+    const evalValues = await evaluate("data=10\n+10-1\ndata +2.5\nsum");
+    expect(evalValues[3].result).toBeCloseTo(31.5);
+  });
 });
 
 // Mocking necessary parts of the global scope and DOM
@@ -228,8 +244,8 @@ vi.mock("@sentry/browser", () => ({
 }));
 
 describe("Testing initSentry", () => {
-  it("should initialize Sentry with the correct configuration", () => {
-    initSentry();
+  it("should initialize Sentry with the correct configuration", async () => {
+    await initSentry();
 
     expect(Sentry.init).toHaveBeenCalledWith({
       dsn: "https://f6181e1f6794abaf08674441d2c08403@o4507406315159552.ingest.de.sentry.io/4507406320992336",
@@ -261,5 +277,35 @@ describe("testing parse", () => {
     parse(editor.innerText, output);
     await new Promise(setImmediate); // Wait for async operations
     expect(output.querySelectorAll("button")[0].innerText).toBe("4");
+  });
+});
+
+describe("testing postProcess", () => {
+  it("should return outputs when inputs and outputs lengths are equal", () => {
+    const inputs = ["2", "=", "3"];
+    const outputs = [2, "", 3];
+    const result = postProcess(inputs, outputs);
+    expect(result).toEqual([2, 2, 3]);
+  });
+
+  it("should return outputs adding previous inputs when inputs and outputs lengths are equal", () => {
+    const inputs = ["2", "5", "total", "3"];
+    const outputs = [2, 5, "", 3];
+    const result = postProcess(inputs, outputs);
+    expect(result).toEqual([2, 5, 7, 3]);
+  });
+
+  it("should handle different lengths of inputs and outputs", () => {
+    const inputs = ["2", "sum", "3"];
+    const outputs = [2, 5];
+    const result = postProcess(inputs, outputs);
+    expect(result).toEqual([2, 5]);
+  });
+
+  it("should handle empty inputs", () => {
+    const inputs = [];
+    const outputs = [2, 5];
+    const result = postProcess(inputs, outputs);
+    expect(result).toEqual([2, 5]);
   });
 });

@@ -13,7 +13,7 @@ describe("createHelpTables tests", () => {
   it("should create shortcut tables contents", () => {
     const shortcutTables = document.getElementById("shortcut-table-container");
     expect(shortcutTables.querySelectorAll("td")[4].outerHTML).toEqual(
-      "<td>Open/Close calculator History</td>"
+      "<td>Open/Close help</td>"
     );
   });
 
