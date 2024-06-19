@@ -1,5 +1,4 @@
 import {
-  setupEvaluator,
   generateDocID,
   evaluate,
   loadPlaceholderData,
@@ -8,13 +7,52 @@ import {
   initSentry,
   postProcess,
   parse,
+  init,
+  getResultTokens,
 } from "./editor";
-import { describe, it, expect, vi, test, beforeEach } from "vitest";
+import { describe, it, expect, vi, test, beforeEach, afterEach } from "vitest";
 import * as Sentry from "@sentry/browser";
+import path from "path";
+import fs from "fs";
+
+function loadIndexHtml() {
+  const indexPath = path.resolve(__dirname, "../html/index.html");
+  const indexHtml = fs.readFileSync(indexPath, "utf-8");
+  document.body.innerHTML = indexHtml;
+}
+
+describe("Testing init method", () => {
+  loadIndexHtml();
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test("init function initializes the application correctly", async () => {
+    // Mocking the global variables
+    global.editor = document.getElementById("editor");
+    global.output = document.getElementById("output");
+    global.historyData = [];
+    global.settingsData = {};
+    global.evaluatedValues = [];
+    global.currentDocData = {};
+    global.docId = "";
+
+    await init();
+
+    // testing the default placeholder data results
+    expect(editor.innerText).toContain("data = 12");
+    expect(editor.innerText).toContain("10 usd to inr");
+    expect(output.querySelectorAll("button")[0].innerText).toBe("3");
+    expect(output.querySelectorAll("button")[1].innerText).toBe("36");
+    expect(output.querySelectorAll("button")[2].innerText).toBeCloseTo(
+      "4.82803"
+    );
+    expect(output.querySelectorAll("button")[3].innerText).toBe("12");
+    expect(output.querySelectorAll("button")[4].innerText).toBe("17");
+  });
+});
 
 // AAA Principle to write a test case: Arrange, Act, Assert
-
-await setupEvaluator();
 
 describe("testing generateDocID", () => {
   test("generating Doc ID", () => {
@@ -307,5 +345,93 @@ describe("testing postProcess", () => {
     const outputs = [2, 5];
     const result = postProcess(inputs, outputs);
     expect(result).toEqual([2, 5]);
+  });
+});
+
+describe("Testing getResultTokens", () => {
+  it("should return a result token for a valid expression", () => {
+    const validExpression = "5 + 3";
+    const expectedResultToken = {
+      type: "result",
+      value: 8,
+    };
+
+    const resultTokens = getResultTokens([
+      {
+        type: "expression",
+        value: validExpression,
+        result: 8,
+      },
+    ]);
+
+    expect(resultTokens).toEqual([expectedResultToken]);
+  });
+
+  it("should return an empty array for an empty expression", () => {
+    const emptyExpression = "";
+
+    const resultTokens = getResultTokens([
+      {
+        type: "expression",
+        value: emptyExpression,
+        result: null,
+      },
+    ]);
+
+    expect(resultTokens[0].value).toEqual("");
+  });
+
+  it("should return a null token for an invalid expression", () => {
+    const invalidExpression = "invalid";
+    const expectedNullToken = {
+      type: "null",
+      value: "",
+    };
+
+    const resultTokens = getResultTokens([
+      {
+        type: "expression",
+        value: invalidExpression,
+        result: null,
+      },
+    ]);
+
+    expect(resultTokens).toEqual([expectedNullToken]);
+  });
+
+  it("should return a null token for an expression with a null result", () => {
+    const nullExpression = "5 + null";
+    const expectedNullToken = {
+      type: "null",
+      value: "",
+    };
+
+    const resultTokens = getResultTokens([
+      {
+        type: "expression",
+        value: nullExpression,
+        result: null,
+      },
+    ]);
+
+    expect(resultTokens).toEqual([expectedNullToken]);
+  });
+
+  it("should return a null token for an expression with a NaN result", () => {
+    const nanExpression = "5 + NaN";
+    const expectedNullToken = {
+      type: "null",
+      value: "",
+    };
+
+    const resultTokens = getResultTokens([
+      {
+        type: "expression",
+        value: nanExpression,
+        result: NaN,
+      },
+    ]);
+
+    expect(resultTokens).toEqual([expectedNullToken]);
   });
 });
