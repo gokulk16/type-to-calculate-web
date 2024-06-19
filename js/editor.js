@@ -190,10 +190,6 @@ function setupDocument() {
   }
 }
 
-function removeOverlay() {
-  document.body.classList.remove("loading");
-}
-
 function sortHistory(a, b) {
   // sorting comparison method to use in sort()
   const a_timestamp = new Date(a.modified);
@@ -386,7 +382,7 @@ export function parse(value, outputElement) {
 }
 
 function updateOutputDisplay(outputElement) {
-  let results = getResultTokens();
+  let results = getResultTokens(evaluatedValues);
 
   for (const [i, result] of results.entries()) {
     let button;
@@ -588,10 +584,10 @@ export function evaluate(value) {
   return evaluatedValues;
 }
 
-function getResultTokens() {
+export function getResultTokens(evalResults) {
   let results = [];
 
-  for (const expression of evaluatedValues) {
+  for (const expression of evalResults) {
     switch (expression.type) {
       case "newline":
       case "comment":
@@ -706,5 +702,4 @@ export async function init() {
   setupListeners();
   evaluate(editor.innerText);
   updateOutputDisplay(output);
-  removeOverlay();
 }
