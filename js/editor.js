@@ -246,6 +246,7 @@ function createHistoryItems(historySessionData) {
 function createHistoryElements() {
   let noOfHistoryLines = 0;
   var calculatorHistory = document.getElementById("calculator-history");
+
   for (let history of historyData) {
     if (!("lines" in history)) {
       continue;
@@ -256,8 +257,14 @@ function createHistoryElements() {
     const historyItemsElement = document.createElement("div");
     historyItemsElement.id = "history-items";
     calculatorHistory.appendChild(historyItemsElement);
+
     let [historyItemEditor, historyItemsOutput] = createHistoryItems(history);
+
+    const separatorElement = document.createElement("div");
+    separatorElement.className = "separator";
+
     historyItemsElement.appendChild(historyItemEditor);
+    historyItemsElement.appendChild(separatorElement);
     historyItemsElement.appendChild(historyItemsOutput);
     noOfHistoryLines += history.lines.length;
   }
@@ -267,10 +274,9 @@ function createHistoryElements() {
 function hideCalculatorHistory() {
   var calculatorHistory = document.getElementById("calculator-history");
   calculatorHistory.style.display = "none";
-  editor.style.minHeight = "100vh";
-  editor.style.maxHeight = "100vh";
-  output.style.minHeight = "100vh";
-  output.style.maxHeight = "100vh";
+  var calculator = document.getElementById("calculator");
+  calculator.style.minHeight = "100vh";
+  calculator.style.maxHeight = "100vh";
 }
 
 // Function to display calculator history
@@ -281,26 +287,21 @@ function displayCalculatorHistory() {
   }
   var calculatorHistory = document.getElementById("calculator-history");
   calculatorHistory.style.display = "block";
+  var calculator = document.getElementById("calculator");
   // to add the height based on the number of elements in history
   if (noOfHistoryLines < 3) {
-    editor.style.minHeight = "92vh";
-    editor.style.maxHeight = "92vh";
-    output.style.minHeight = "92vh";
-    output.style.maxHeight = "92vh";
+    calculator.style.minHeight = "92vh";
+    calculator.style.maxHeight = "92vh";
     calculatorHistory.style.minHeight = "8vh";
     calculatorHistory.style.maxHeight = "8vh";
   } else if (noOfHistoryLines < 10) {
-    editor.style.minHeight = "85vh";
-    editor.style.maxHeight = "85vh";
-    output.style.minHeight = "85vh";
-    output.style.maxHeight = "85vh";
+    calculator.style.minHeight = "85vh";
+    calculator.style.maxHeight = "85vh";
     calculatorHistory.style.minHeight = "15vh";
     calculatorHistory.style.maxHeight = "15vh";
   } else {
-    editor.style.minHeight = "70vh";
-    editor.style.maxHeight = "70vh";
-    output.style.minHeight = "70vh";
-    output.style.maxHeight = "70vh";
+    calculator.style.minHeight = "70vh";
+    calculator.style.maxHeight = "70vh";
     calculatorHistory.style.minHeight = "30vh";
     calculatorHistory.style.maxHeight = "30vh";
   }

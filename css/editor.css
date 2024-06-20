@@ -11,10 +11,11 @@ body {
   overscroll-behavior: none;
 }
 
-.app {
-  display: flex;
-  justify-content: space-between;
-  overflow: visible;
+.calculator {
+  display: grid;
+  grid-template-columns: 1fr 5px var(--output-column);
+  outline: none;
+  overflow: auto !important;
 }
 
 .editor {
@@ -23,13 +24,22 @@ body {
   border: none;
   outline: none;
   resize: none;
-  width: 100%;
+  max-width: 100%;
+  min-width: 15%;
   color: var(--input-number);
 }
 
+.separator {
+  display: flex;
+  justify-content: center;
+  background: var(--history-accent-2);
+  height: 100%;
+  /* cursor: ew-resize; */
+}
+
 .output {
-  border-left: 1px solid var(--tertiary);
-  width: 37%;
+  max-width: 100%;
+  min-width: 15%;
   background-color: var(--output-background);
 }
 
@@ -38,8 +48,7 @@ body {
   padding: 8px;
   white-space: pre;
   min-height: 100vh;
-  overflow-x: hidden;
-  overflow-y: "auto";
+  overflow: auto !important;
 }
 
 .history-editor {
@@ -48,7 +57,8 @@ body {
   border: none;
   outline: none;
   resize: none;
-  width: 100%;
+  min-width: 15%;
+  max-width: 100%;
   flex-direction: column;
 }
 
@@ -60,11 +70,15 @@ body {
   color: var(--input-number);
   font-size: 21px;
   line-height: 28px;
+  text-align: left;
+  overflow: auto !important;
+  white-space: nowrap;
 }
 
 .history-output {
-  border-left: 1px solid var(--tertiary);
-  width: 37%;
+  /* border-left: 1px solid var(--tertiary); */
+  min-width: 15%;
+  max-width: 100%;
   background-color: var(--output-background);
   flex-direction: column;
 }
@@ -72,6 +86,7 @@ body {
 .history-editor,
 .history-output {
   padding: 8px;
+  overflow: auto !important;
 }
 
 .history-result-btn {
@@ -121,8 +136,9 @@ body {
 
 #history-items {
   border-bottom: 1px solid var(--history-accent-1);
-  flex-direction: row;
-  display: flex;
+  overflow: auto !important;
+  display: grid;
+  grid-template-columns: 1fr 5px var(--output-column);
 }
 
 .result-btn {
