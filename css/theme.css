@@ -9,6 +9,7 @@
     "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono",
     "Courier New", monospace;
 
+  --output-column: minmax(150px, 37%);
   --background: #ffffff;
   --surface: #ffffff;
   --surface-shade: rgba(0, 0, 0, 0.15);
