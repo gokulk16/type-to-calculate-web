@@ -21,6 +21,12 @@ let homeCurrency;
 let showHelp = false;
 let evaluatedValues = []; // All evaluated expressions by line
 let docId;
+let calculator;
+let separators;
+let startX;
+let editorWidthBefore;
+let outputWidthBefore;
+
 document.addEventListener("DOMContentLoaded", init);
 
 export async function setupHomeCurrency() {
@@ -262,6 +268,7 @@ function createHistoryElements() {
 
     const separatorElement = document.createElement("div");
     separatorElement.className = "separator";
+    separatorElement.id = "separator";
 
     historyItemsElement.appendChild(historyItemEditor);
     historyItemsElement.appendChild(separatorElement);
@@ -369,6 +376,12 @@ function setupListeners() {
   helpOverlayTables.addEventListener("click", onOverlayClick, false);
   var calculatorHistory = document.getElementById("calculator-history");
   calculatorHistory.addEventListener("click", onHistoryClick, false);
+  window.addEventListener("resize", onWindowResize, false);
+  separators = document.body.querySelectorAll("#separator");
+  calculator = document.getElementById("calculator");
+  separators.forEach(function (separator) {
+    separator.addEventListener("mousedown", updateWidthOnResize, false);
+  });
 }
 
 async function onEditorInput() {
@@ -673,6 +686,51 @@ async function copyValueToClipboard(value) {
   } catch (err) {
     alert(chrome.i18n.getMessage("clipboard_failure"));
   }
+}
+
+function onWindowResize(e) {
+  // update with default values on window resize
+  updateWidthOfCalculator("1fr", "minmax(150px, 37%)");
+  updateWidthOfHistory("1fr", "minmax(150px, 37%)");
+}
+
+function updateWidthOnResize(e) {
+  startX = e.clientX;
+  const gridStyles = window.getComputedStyle(calculator);
+  const existingGridWidths = gridStyles
+    .getPropertyValue("grid-template-columns")
+    .split(" ");
+  editorWidthBefore = parseFloat(existingGridWidths[0]);
+  outputWidthBefore = parseFloat(existingGridWidths[2]);
+
+  document.addEventListener("mousemove", resize);
+  document.addEventListener("mouseup", stopResize);
+}
+
+async function updateWidthOfHistory(editorWidth, outputWidth) {
+  let historyItemsList = document.body.querySelectorAll("#history-items");
+  if (!_.isEmpty(historyItemsList)) {
+    historyItemsList.forEach((item) => {
+      item.style.gridTemplateColumns = `${editorWidth} 5px ${outputWidth}`;
+    });
+  }
+}
+
+function updateWidthOfCalculator(editorWidth, outputWidth) {
+  calculator.style.gridTemplateColumns = `${editorWidth} 5px ${outputWidth}`;
+}
+
+function resize(e) {
+  const dx = e.clientX - startX;
+  const editorWidthAfter = `${editorWidthBefore + dx}px`;
+  const outputWidthAfter = `${outputWidthBefore - dx}px`;
+  updateWidthOfCalculator(editorWidthAfter, outputWidthAfter);
+  updateWidthOfHistory(editorWidthAfter, outputWidthAfter);
+}
+
+function stopResize() {
+  document.removeEventListener("mousemove", resize);
+  document.removeEventListener("mouseup", stopResize);
 }
 
 export async function initSentry() {

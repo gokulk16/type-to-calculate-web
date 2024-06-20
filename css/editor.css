@@ -23,7 +23,6 @@ body {
   appearance: none;
   border: none;
   outline: none;
-  resize: none;
   max-width: 100%;
   min-width: 15%;
   color: var(--input-number);
@@ -34,7 +33,7 @@ body {
   justify-content: center;
   background: var(--history-accent-2);
   height: 100%;
-  /* cursor: ew-resize; */
+  cursor: ew-resize;
 }
 
 .output {
