@@ -517,8 +517,9 @@ function findLastValue(values) {
 
 export async function copyLastValue(values) {
   // copy the last result to clipboard
-  const lastValue = findLastValue(values);
+  let lastValue = findLastValue(values);
   if (_.isNumber(lastValue)) {
+    lastValue = parseFloat(lastValue.toFixed(5));
     copyValueToClipboard(lastValue);
     return lastValue;
   } else {
