@@ -1,8 +1,8 @@
-import { describe, it, expect } from "vitest";
+import { describe, test, expect } from "vitest";
 import { convertXToMultiplication } from "./convert_x_to_multiply";
 
 describe("testing convertXToMultiplication", () => {
-  it("Convert all 'x' to multiplication operator", () => {
+  test("Convert all 'x' to multiplication operator", () => {
     const lines = [
       "2x3",
       "2 x 3",
@@ -25,7 +25,7 @@ describe("testing convertXToMultiplication", () => {
     ]);
   });
 
-  it("Dont convert some 'x' to multiplication operator in expressions", () => {
+  test("Dont convert some 'x' to multiplication operator in expressions", () => {
     const lines = ["2xdata", "0x90 x 2", "0x90x 2", "x22e x2x4x1.7x0.41"];
     const convertedLines = convertXToMultiplication(lines);
 

@@ -505,20 +505,21 @@ function debounce(callback, wait) {
   };
 }
 
-function isNotEmptyResult(item) {
+function isNumberResult(item) {
   return !_.isEmpty(item) && _.isNumber(item.result);
 }
 
 // find the last not empty value from evaluatedValues
 function findLastValue(values) {
-  let lastValue = values.findLast(isNotEmptyResult);
+  let lastValue = values.findLast(isNumberResult);
   return lastValue ? lastValue.result : null;
 }
 
 export async function copyLastValue(values) {
   // copy the last result to clipboard
-  const lastValue = findLastValue(values);
+  let lastValue = findLastValue(values);
   if (_.isNumber(lastValue)) {
+    lastValue = parseFloat(lastValue.toFixed(5));
     copyValueToClipboard(lastValue);
     return lastValue;
   } else {
@@ -526,24 +527,32 @@ export async function copyLastValue(values) {
   }
 }
 
-function onEditorKeydown(e) {
+export async function copyPasteLastValue(values) {
+  let lastValue = await copyLastValue(values);
+  if (lastValue) {
+    insertNode(lastValue);
+  }
+}
+
+async function onEditorKeydown(e) {
   let key = e.key;
   // Order of below conditions matter since there is subset condition
   if (key === "Enter" && e.shiftKey && (e.metaKey || e.ctrlKey)) {
-    let lastValue = copyLastValue(evaluatedValues);
-    if (lastValue) {
-      insertNode(lastValue);
-    }
+    // copy & paste last value
+    copyPasteLastValue(evaluatedValues);
   } else if (key === "Enter" && (e.metaKey || e.ctrlKey)) {
+    // copy last value
     copyLastValue(evaluatedValues);
   } else if (key === "/" && (e.metaKey || e.ctrlKey)) {
+    // open/close help
     toggleHelpOverlay();
   } else if (key === "h" && (e.metaKey || e.ctrlKey)) {
+    // open/close history
     toggleHistory();
   }
 }
 
-function insertNode(...nodes) {
+export function insertNode(...nodes) {
   for (let node of nodes) {
     document.execCommand("insertText", false, node);
   }

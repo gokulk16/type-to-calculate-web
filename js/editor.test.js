@@ -9,8 +9,10 @@ import {
   parse,
   init,
   getResultTokens,
+  insertNode,
+  copyPasteLastValue,
 } from "./editor";
-import { describe, it, expect, vi, test, beforeEach, afterEach } from "vitest";
+import { describe, expect, vi, test, beforeEach, afterEach } from "vitest";
 import * as Sentry from "@sentry/browser";
 import path from "path";
 import fs from "fs";
@@ -200,21 +202,21 @@ global.editor = {
 global.historyData = [];
 
 describe("testing loadPlaceholderData", () => {
-  it("should set placeholder text when no history data is present and currency conversions are loaded", async () => {
+  test("should set placeholder text when no history data is present and currency conversions are loaded", async () => {
     editor.innerText = "";
     await loadPlaceholderData(editor, historyData, true);
 
     expect(editor.innerText).toContain("10 usd to inr");
   });
 
-  it("should not set placeholder text when history data is present", async () => {
+  test("should not set placeholder text when history data is present", async () => {
     editor.innerText = "";
     await loadPlaceholderData(editor, [{ mockHistoryData: 1 }], true);
 
     expect(editor.innerText).toBe("");
   });
 
-  it("should set basic placeholder text when no currency conversions are loaded", async () => {
+  test("should set basic placeholder text when no currency conversions are loaded", async () => {
     editor.innerText = "";
     await loadPlaceholderData(editor, historyData, false);
 
@@ -236,23 +238,58 @@ Object.assign(navigator, {
 });
 
 describe("testing copyLastValue", () => {
-  it("should not attempt to copy when no numeric results are available", async () => {
+  test("should not attempt to copy when no numeric results are available", async () => {
     global.evaluatedValues = [{ result: "text" }, { result: "some text" }];
     await copyLastValue(global.evaluatedValues);
     //arrange .not.toHaveBeenCalled tests first since all calls in the test file will be counted
     expect(navigator.clipboard.writeText).not.toHaveBeenCalled();
   });
 
-  it("should copy the last numeric result to the clipboard", async () => {
+  test("should copy the last numeric result to the clipboard", async () => {
     global.evaluatedValues = [{ result: "text" }, { result: 42 }];
     await copyLastValue(global.evaluatedValues);
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(42);
   });
 
-  it("should copy the recent non empty vaue if available", async () => {
+  test("should copy the recent non empty vaue if available", async () => {
     global.evaluatedValues = [{ result: 21 }, { result: "" }];
     await copyLastValue(global.evaluatedValues);
     expect(navigator.clipboard.writeText).toHaveBeenCalled(21);
+  });
+});
+
+describe("testing copyPasteLastValue", () => {
+  Object.assign(document, {
+    execCommand: vi.fn(),
+  });
+
+  test("should not attempt to copy since no numeric results are available", async () => {
+    global.evaluatedValues = [{ result: "text" }, { result: "some text" }];
+    await copyPasteLastValue(evaluatedValues);
+    //arrange .not.toHaveBeenCalled tests first since all calls in the test file will be counted
+    expect(document.execCommand).not.toHaveBeenCalled();
+  });
+
+  test("should paste the last numeric results available", async () => {
+    global.evaluatedValues = [{ result: 2 }, { result: "some text" }];
+    await copyPasteLastValue(evaluatedValues);
+    expect(document.execCommand).toHaveBeenCalledWith("insertText", false, 2);
+  });
+});
+
+describe("Testing insertNode", () => {
+  Object.assign(document, {
+    execCommand: vi.fn(),
+  });
+  test("should insert a new node with the given value into the editor", () => {
+    const value = "new value";
+    insertNode(value);
+
+    expect(document.execCommand).toHaveBeenCalledWith(
+      "insertText",
+      false,
+      "new value"
+    );
   });
 });
 
@@ -282,7 +319,7 @@ vi.mock("@sentry/browser", () => ({
 }));
 
 describe("Testing initSentry", () => {
-  it("should initialize Sentry with the correct configuration", async () => {
+  test("should initialize Sentry with the correct configuration", async () => {
     await initSentry();
 
     expect(Sentry.init).toHaveBeenCalledWith({
@@ -309,7 +346,7 @@ describe("testing parse", () => {
     global.output = document.getElementById("output");
   });
 
-  it("should update the output value to 4", async () => {
+  test("should update the output value to 4", async () => {
     editor.innerText = "2+2";
 
     parse(editor.innerText, output);
@@ -319,28 +356,28 @@ describe("testing parse", () => {
 });
 
 describe("testing postProcess", () => {
-  it("should return outputs when inputs and outputs lengths are equal", () => {
+  test("should return outputs when inputs and outputs lengths are equal", () => {
     const inputs = ["2", "=", "3"];
     const outputs = [2, "", 3];
     const result = postProcess(inputs, outputs);
     expect(result).toEqual([2, 2, 3]);
   });
 
-  it("should return outputs adding previous inputs when inputs and outputs lengths are equal", () => {
+  test("should return outputs adding previous inputs when inputs and outputs lengths are equal", () => {
     const inputs = ["2", "5", "total", "3"];
     const outputs = [2, 5, "", 3];
     const result = postProcess(inputs, outputs);
     expect(result).toEqual([2, 5, 7, 3]);
   });
 
-  it("should handle different lengths of inputs and outputs", () => {
+  test("should handle different lengths of inputs and outputs", () => {
     const inputs = ["2", "sum", "3"];
     const outputs = [2, 5];
     const result = postProcess(inputs, outputs);
     expect(result).toEqual([2, 5]);
   });
 
-  it("should handle empty inputs", () => {
+  test("should handle empty inputs", () => {
     const inputs = [];
     const outputs = [2, 5];
     const result = postProcess(inputs, outputs);
@@ -349,7 +386,7 @@ describe("testing postProcess", () => {
 });
 
 describe("Testing getResultTokens", () => {
-  it("should return a result token for a valid expression", () => {
+  test("should return a result token for a valid expression", () => {
     const validExpression = "5 + 3";
     const expectedResultToken = {
       type: "result",
@@ -367,7 +404,7 @@ describe("Testing getResultTokens", () => {
     expect(resultTokens).toEqual([expectedResultToken]);
   });
 
-  it("should return an empty array for an empty expression", () => {
+  test("should return an empty array for an empty expression", () => {
     const emptyExpression = "";
 
     const resultTokens = getResultTokens([
@@ -381,7 +418,7 @@ describe("Testing getResultTokens", () => {
     expect(resultTokens[0].value).toEqual("");
   });
 
-  it("should return a null token for an invalid expression", () => {
+  test("should return a null token for an invalid expression", () => {
     const invalidExpression = "invalid";
     const expectedNullToken = {
       type: "null",
@@ -399,7 +436,7 @@ describe("Testing getResultTokens", () => {
     expect(resultTokens).toEqual([expectedNullToken]);
   });
 
-  it("should return a null token for an expression with a null result", () => {
+  test("should return a null token for an expression with a null result", () => {
     const nullExpression = "5 + null";
     const expectedNullToken = {
       type: "null",
@@ -417,7 +454,7 @@ describe("Testing getResultTokens", () => {
     expect(resultTokens).toEqual([expectedNullToken]);
   });
 
-  it("should return a null token for an expression with a NaN result", () => {
+  test("should return a null token for an expression with a NaN result", () => {
     const nanExpression = "5 + NaN";
     const expectedNullToken = {
       type: "null",
