@@ -5,6 +5,23 @@
   line-height: 1.2;
 }
 
+.hero-button {
+  background-color: #0056b3;
+  color: var(--input-number);
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 18px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  cursor: pointer; 
+  width: 285px; 
+}
+
+.hero-button:hover {
+  background-color: #004a9b;
+}
+
 .hero {
   display: flex;
   flex-direction: column;
@@ -15,6 +32,7 @@
   font-weight: 380;
   font-size: 28px;
   line-height: 1;
+  background-color: #d3dfe6;
 }
 
 .hero-gif {
