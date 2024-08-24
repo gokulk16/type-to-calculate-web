@@ -2,6 +2,7 @@ import * as esbuild from "esbuild";
 import copyStaticFiles from "esbuild-copy-static-files";
 import * as fsExtra from "fs-extra";
 import { sentryEsbuildPlugin } from "@sentry/esbuild-plugin";
+import copyFilePlugin from "./esbuild-helper/copy-file-plugin.js";
 
 fsExtra.emptyDirSync("./dist");
 
@@ -13,6 +14,8 @@ esbuild.build({
   sourcemap: true, // Source map needed for sentry to work
   mainFields: ["module", "main"],
   plugins: [
+    copyFilePlugin("./manifest.json", "./dist/manifest.json"),
+    copyFilePlugin("./sw.js", "./dist/sw.js"),
     copyStaticFiles({
       src: "./css",
       dest: "dist/css",
