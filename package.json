@@ -43,7 +43,7 @@
   },
   "homepage": "https://github.com/gokulk16/type-to-calculate-web#readme",
   "dependencies": {
-    "@sentry/browser": "^8.20.0",
+    "@sentry/browser": "^8.24.0",
     "@sentry/esbuild-plugin": "^2.21.1",
     "braces": "3.0.3",
     "country-to-currency": "^1.1.5",
