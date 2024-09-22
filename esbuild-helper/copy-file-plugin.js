@@ -1,11 +1,11 @@
 import fs from "fs";
 
-const copyFilePlugin = (fileSrcPath, fileDestPAth) => ({
+const copyFilePlugin = (fileSrcPath, fileDestPath) => ({
   name: "copy-file-plugin",
   setup(build) {
     build.onEnd(async () => {
       try {
-        fs.copyFileSync(fileSrcPath, fileDestPAth);
+        fs.copyFileSync(fileSrcPath, fileDestPath);
       } catch (e) {
         console.error(`Failed to copy file: ${fileSrcPath}`, e);
       }

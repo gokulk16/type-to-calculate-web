@@ -759,29 +759,36 @@ export async function initSentry() {
   });
 }
 
-export function registerSW() {
+export async function registerSW() {
   try {
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker
-          .register("../sw.js")
-          .then((registration) => {
-            console.log(
-              "Service Worker registered with scope:",
-              registration.scope
-            );
-          })
-          .catch((error) => {
-            console.error("Service Worker registration failed:", error);
-          });
-      });
+    if (!("serviceWorker" in navigator)) {
+      console.error("Service Workers are not supported by this browser");
+      return;
     }
+    console.log("Registering Service Worker - - - -");
+
+    window.addEventListener("load", () => {
+      console.log("trying load - - - ");
+
+      navigator.serviceWorker
+        .register("../sw.js")
+        .then((registration) => {
+          console.log(
+            "Service Worker registered with scope:",
+            registration.scope
+          );
+        })
+        .catch((error) => {
+          console.error("Service Worker registration failed:", error);
+        });
+    });
   } catch (error) {
     console.error("Service Worker registration failed:", error);
   }
 }
 
 export async function init() {
+  registerSW();
   initSentry();
   setupDocument();
   await loadSettings();
@@ -792,5 +799,4 @@ export async function init() {
   setupListeners();
   evaluate(editor.innerText);
   updateOutputDisplay(output);
-  registerSW();
 }
