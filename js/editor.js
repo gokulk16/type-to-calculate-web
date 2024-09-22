@@ -759,7 +759,28 @@ export async function initSentry() {
   });
 }
 
+export async function registerSW() {
+  try {
+    if (!("serviceWorker" in navigator)) {
+      console.log("Service Workers are not supported by this browser");
+      return;
+    }
+
+    window.addEventListener("load", () => {
+      navigator.serviceWorker
+        .register("../sw.js")
+        .then((registration) => {})
+        .catch((error) => {
+          console.error("Service Worker registration failed:", error);
+        });
+    });
+  } catch (error) {
+    console.error("Service Worker registration failed:", error);
+  }
+}
+
 export async function init() {
+  registerSW();
   initSentry();
   setupDocument();
   await loadSettings();
