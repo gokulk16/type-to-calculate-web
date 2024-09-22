@@ -762,22 +762,14 @@ export async function initSentry() {
 export async function registerSW() {
   try {
     if (!("serviceWorker" in navigator)) {
-      console.error("Service Workers are not supported by this browser");
+      console.log("Service Workers are not supported by this browser");
       return;
     }
-    console.log("Registering Service Worker - - - -");
 
     window.addEventListener("load", () => {
-      console.log("trying load - - - ");
-
       navigator.serviceWorker
         .register("../sw.js")
-        .then((registration) => {
-          console.log(
-            "Service Worker registered with scope:",
-            registration.scope
-          );
-        })
+        .then((registration) => {})
         .catch((error) => {
           console.error("Service Worker registration failed:", error);
         });

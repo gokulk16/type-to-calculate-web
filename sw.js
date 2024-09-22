@@ -7,6 +7,8 @@ const urlsToCache = [
   "js/editor.js",
   "/favicon-150.png",
   "/favicon-48.png",
+  "/favicon-512.png",
+  "/favicon-192.png",
 ];
 
 // Install the service worker
