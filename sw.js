@@ -3,8 +3,8 @@ const CACHE_NAME = "ttc-cache-v1";
 const urlsToCache = [
   "/",
   "/index.html",
-  "css/*.css",
-  "js/editor.js",
+  "/css/*.css",
+  "/js/editor.js",
   "/favicon-150.png",
   "/favicon-48.png",
   "/favicon-512.png",
