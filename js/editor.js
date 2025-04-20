@@ -677,30 +677,38 @@ async function aiEvaluation(inputValues, lines) {
 
   callAI(inputValues).then((response) => {
     if (response) {
+      var response_lines = response.split("\n");
       // proceed only if ai response and evaluatedValues are of equal length
-      if (response.length !== evaluatedValues.length) {
-        return;
+      if (response_lines.length !== evaluatedValues.length) {
+        // if evaluatedValues's last value is just empty string or empty, then can ignore that item and compare length again
+        if (_.isEmpty(evaluatedValues[evaluatedValues.length - 1].result)) {
+          evaluatedValues.pop();
+        }
+
+        if (response_lines.length !== evaluatedValues.length) {
+          console.log("AI response and evaluatedValues length is still mismatched.");
+          return;
+        }
       }
       // check if the response is empty
       // if empty, then return the evaluatedValues
-      if (_.isEmpty(response)) {
+      if (_.isEmpty(response_lines)) {
         console.log("AI response is empty.");
         return;
       }
 
       // override the result of evaluatedValues only if the aiEvaluated value is not empty and at the same position evaluatedValue is giving a empty result
       // also check and override the input value to be non empty
-      for (let index = 0; index < response.length; index++) {
-
+      for (let index = 0; index < response_lines.length; index++) {
         if (
-          !_.isEmpty(response[index]) &&
+          !_.isEmpty(response_lines[index]) &&
           _.isEmpty(evaluatedValues[index].result) &&
           !_.isEmpty(lines[index].trim())
         ) {
           // change the inputValues and send again to evaluate() again
           inputValues = replaceInputsInIndex(
             inputValues,
-            response[index],
+            response_lines[index],
             index
           );
           aiEvaluatedindexes.push(index);
