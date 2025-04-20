@@ -24,8 +24,8 @@ Based on [math-js](https://www.npmjs.com/package/mathjs)
 
 <!-- Add a readme text on how to run this locally and contribute -->
 ## Run Locally
-1. Clone the repository
-2. Navigate to the project directory
+1. Clone the repository `git clone https://github.com/gokulk16/type-to-calculate-web.git`
+2. Navigate to the project directory `cd type-to-calculate-web`
 3. Install dependencies
    ```npm install``` 
 4. Build
