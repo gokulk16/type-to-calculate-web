@@ -21,3 +21,14 @@ Features:
   
   <img width="810" alt="Screenshot 2024-04-24 at 5 41 16 PM" src="https://github.com/gokulk16/type-to-calculate/assets/8376313/9a88f75f-38c1-4e98-8f58-c216de31bd96">
 Based on [math-js](https://www.npmjs.com/package/mathjs)
+
+<!-- Add a readme text on how to run this locally and contribute -->
+## Run Locally
+1. Clone the repository `git clone https://github.com/gokulk16/type-to-calculate-web.git`
+2. Navigate to the project directory `cd type-to-calculate-web`
+3. Install dependencies
+   ```npm install``` 
+4. Build
+   ``` npm run build ```
+5. Start the development server
+   ``` cd dist && npx http-server ```

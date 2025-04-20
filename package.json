@@ -5,7 +5,8 @@
   "scripts": {
     "build": "node esbuild.js",
     "test": "vitest --config ./vitest.config.js",
-    "watch": "npm-watch"
+    "watch": "npm-watch",
+    "serve": "npm run build && npx http-server ./dist/ -p 8080 -o"
   },
   "watch": {
     "build": {

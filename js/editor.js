@@ -6,6 +6,7 @@ import { convertXToMultiplication } from "./utils/convert_x_to_multiply.js";
 import showToast from "show-toast";
 import { LocalStorage } from "web-browser-storage";
 import { createUnit, unit, evaluate as mathjs_evaluate } from "mathjs";
+import { callAI } from "./AI.js";
 const storage = new LocalStorage();
 var _ = require("lodash");
 
@@ -20,6 +21,7 @@ let conversionRates;
 let homeCurrency;
 let showHelp = false;
 let evaluatedValues = []; // All evaluated expressions by line
+let aiEvaluatedindexes = []; // AI evaluations by line
 let docId;
 let calculator;
 let separators;
@@ -385,19 +387,19 @@ function setupListeners() {
 }
 
 async function onEditorInput() {
+  aiEvaluatedindexes = [];
   parse(editor.innerText, output);
-  saveData();
 }
 
 export function parse(value, outputElement) {
   outputElement.innerText = "";
   evaluate(value);
   updateOutputDisplay(outputElement);
+  saveData();
 }
 
 function updateOutputDisplay(outputElement) {
   let results = getResultTokens(evaluatedValues);
-
   for (const [i, result] of results.entries()) {
     let button;
     let span;
@@ -420,6 +422,7 @@ function updateOutputDisplay(outputElement) {
         button.classList.add(result.type);
         button.dataset.value = result.value;
         outputElement.appendChild(button);
+        outputElement = addAITagToOutput(outputElement, i);
         break;
       case "error":
         span = document.createElement("span");
@@ -434,6 +437,35 @@ function updateOutputDisplay(outputElement) {
       outputElement.appendChild(br);
     }
   }
+}
+
+function addAITagToOutput(outputElement, currIndex) {
+  // use currIndex to find the index exists in aiEvaluatedindexes
+  // if yes, then add the ai tag to the output
+  if (aiEvaluatedindexes.includes(currIndex)) {
+    let span = document.createElement("span");
+    span.innerText = "AI";
+    span.classList.add("ai-tag");
+    span.style.backgroundColor = "#A19977"; // Light yellow background
+    span.style.color = "#000"; // Black text
+    span.style.padding = "0";
+    span.style.margin = "4px";
+    span.style.fontSize = "12px";
+    span.style.borderRadius = "50%"; // Circular shape
+    span.style.display = "inline-block"; // Inline-block for centering
+    span.style.textAlign = "center"; // Center text horizontally
+    span.style.lineHeight = "24px"; // Center text vertically by matching line height to height
+    span.style.justifyContent = "center"; // Center text horizontally
+    span.style.alignItems = "center"; // Center text vertically
+    span.style.width = "24px"; // Fixed width for circle
+    span.style.height = "24px"; // Fixed height for circle
+    span.style.backgroundColor = "#A19977"; // Light yellow background
+    span.style.cursor = "default"; // Default cursor since it's not clickable
+    span.title = "Computed by AI. There is a potential for error"; // On hover text
+    outputElement.appendChild(span);
+    console.log("AI tag added to output for index: ", currIndex);
+  }
+  return outputElement;
 }
 
 export function generateDocID() {
@@ -591,7 +623,10 @@ export function postProcess(inputs, outputs) {
   }
 }
 
-export function evaluate(value) {
+export function evaluate(inputvalue) {
+  //create a copy of the value to avoid mutation
+  var value = _.clone(inputvalue);
+
   let lines = value.split("\n");
   evaluatedValues = [];
   let results = useMathJs(lines);
@@ -604,7 +639,87 @@ export function evaluate(value) {
     };
     evaluatedValues[index] = result_expression;
   }
+  aiEvaluation(value, lines);
+
   return evaluatedValues;
+}
+
+function replaceInputsInIndex(input, replaceWithValue, index) {
+  // split input with \n and then replce in the index
+  let tempLines = input.split("\n");
+  tempLines[index] = replaceWithValue;
+  return tempLines.join("\n");
+}
+
+async function aiEvaluation(inputValues, lines) {
+  // check if any line is non-empty but evaluatedValue is having empty result for same index
+  // if yes, then call AI
+  // if no, then return
+  // check if aiEvaluated indexes are empty
+  if (!_.isEmpty(aiEvaluatedindexes)) {
+    return;
+  }
+
+  let anyEvalsFailed = false;
+  for (let index = 0; index < lines.length; index++) {
+    if (
+      !_.isEmpty(lines[index].trim()) &&
+      _.isEmpty(evaluatedValues[index].result)
+    ) {
+      anyEvalsFailed = true;
+      break;
+    }
+  }
+  if (!anyEvalsFailed) {
+    console.log("All evaluations not needed. We saved AI !!!");
+    return;
+  }
+
+  callAI(inputValues).then((response) => {
+    if (response) {
+      var response_lines = response.split("\n");
+      // proceed only if ai response and evaluatedValues are of equal length
+      if (response_lines.length !== evaluatedValues.length) {
+        // if evaluatedValues's last value is just empty string or empty, then can ignore that item and compare length again
+        if (_.isEmpty(evaluatedValues[evaluatedValues.length - 1].result)) {
+          evaluatedValues.pop();
+        }
+
+        if (response_lines.length !== evaluatedValues.length) {
+          console.log("AI response and evaluatedValues length is still mismatched.");
+          return;
+        }
+      }
+      // check if the response is empty
+      // if empty, then return the evaluatedValues
+      if (_.isEmpty(response_lines)) {
+        console.log("AI response is empty.");
+        return;
+      }
+
+      // override the result of evaluatedValues only if the aiEvaluated value is not empty and at the same position evaluatedValue is giving a empty result
+      // also check and override the input value to be non empty
+      for (let index = 0; index < response_lines.length; index++) {
+        if (
+          !_.isEmpty(response_lines[index]) &&
+          _.isEmpty(evaluatedValues[index].result) &&
+          !_.isEmpty(lines[index].trim())
+        ) {
+          // change the inputValues and send again to evaluate() again
+          inputValues = replaceInputsInIndex(
+            inputValues,
+            response_lines[index],
+            index
+          );
+          aiEvaluatedindexes.push(index);
+          parse(inputValues, output);
+        }
+      }
+    }
+
+  }).catch(error => {
+    console.log("Error in AI call:", error);
+  });
 }
 
 export function getResultTokens(evalResults) {
