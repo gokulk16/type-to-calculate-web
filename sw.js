@@ -3,6 +3,10 @@ const CACHE_NAME = "ttc-cache-v1";
 
 // Fetch event: Cache responses immediately after fetching
 self.addEventListener("fetch", (event) => {
+  if (!event.request.url.startsWith('http')) {
+    return;
+    //skip request
+  }
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       // If a match is found in the cache, return it; otherwise, fetch from network

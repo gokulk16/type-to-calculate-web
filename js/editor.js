@@ -651,6 +651,21 @@ function replaceInputsInIndex(input, replaceWithValue, index) {
   return tempLines.join("\n");
 }
 
+function isValidResult(resultValue) {
+  return (_.isString(resultValue) && resultValue.length > 0) || (_.isNumber(resultValue));
+}
+
+function isValidAiResult(resultValue) {
+  return (
+    (_.isString(resultValue) && resultValue.length > 0) ||
+    (_.isNumber(resultValue))
+  );
+}
+
+function isNonEmptyString(val) {
+  return typeof val === "string" && val.trim() !== "";
+}
+
 async function aiEvaluation(inputValues, lines) {
   // check if any line is non-empty but evaluatedValue is having empty result for same index
   // if yes, then call AI
@@ -700,10 +715,11 @@ async function aiEvaluation(inputValues, lines) {
       // override the result of evaluatedValues only if the aiEvaluated value is not empty and at the same position evaluatedValue is giving a empty result
       // also check and override the input value to be non empty
       for (let index = 0; index < response_lines.length; index++) {
+        console.log('in index: ', index);
         if (
-          !_.isEmpty(response_lines[index]) &&
-          _.isEmpty(evaluatedValues[index].result) &&
-          !_.isEmpty(lines[index].trim())
+          isValidAiResult(response_lines[index]) &&
+          !isValidResult(evaluatedValues[index]?.result) &&
+          isNonEmptyString(lines[index])
         ) {
           // change the inputValues and send again to evaluate() again
           inputValues = replaceInputsInIndex(
@@ -884,7 +900,7 @@ export async function registerSW() {
     window.addEventListener("load", () => {
       navigator.serviceWorker
         .register("../sw.js")
-        .then((registration) => {})
+        .then((registration) => { })
         .catch((error) => {
           console.error("Service Worker registration failed:", error);
         });
