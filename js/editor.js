@@ -828,6 +828,15 @@ async function copyValueToClipboard(value) {
   }
 }
 
+function hideSplashScreen() {
+  // Hide splash screen after setupEvaluator completes
+  const splashScreen = document.getElementById('splash-screen');
+  splashScreen.classList.add('hidden');
+  setTimeout(() => {
+    splashScreen.remove();
+  }, 500);
+}
+
 function onWindowResize(e) {
   // update with default values on window resize
   updateWidthOfCalculator("1fr", "minmax(150px, 37%)");
@@ -874,20 +883,24 @@ function stopResize() {
 }
 
 export async function initSentry() {
-  Sentry.init({
-    dsn: "https://f6181e1f6794abaf08674441d2c08403@o4507406315159552.ingest.de.sentry.io/4507406320992336",
-    integrations: [
-      Sentry.browserTracingIntegration(),
-      Sentry.replayIntegration(),
-    ],
-    // Performance Monitoring
-    tracesSampleRate: 1.0, //  Capture 100% of the transactions
-    // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
-    tracePropagationTargets: ["localhost", /^https:\/\/typetocalculate\.in/],
-    // Session Replay
-    replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
-    replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
-  });
+  try {
+    Sentry.init({
+      dsn: "https://f6181e1f6794abaf08674441d2c08403@o4507406315159552.ingest.de.sentry.io/4507406320992336",
+      integrations: [
+        Sentry.browserTracingIntegration(),
+        Sentry.replayIntegration(),
+      ],
+      // Performance Monitoring
+      tracesSampleRate: 1.0, //  Capture 100% of the transactions
+      // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
+      tracePropagationTargets: ["localhost", /^https:\/\/typetocalculate\.in/],
+      // Session Replay
+      replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
+      replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+    });
+  } catch (error) {
+    console.log("Sentry initialization failed:", error);
+  }
 }
 
 export async function registerSW() {
@@ -917,6 +930,8 @@ export async function init() {
   await loadSettings();
   await loadData();
   let currencyUnitsAdded = await setupEvaluator();
+  hideSplashScreen();
+
   loadPlaceholderData(editor, historyData, currencyUnitsAdded);
   focusEditor();
   setupListeners();
