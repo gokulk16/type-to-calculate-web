@@ -1,124 +1,88 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Type to Calculate</title>
-    <meta
-      name="description"
-      content="Type the calculations & see the results as you type. Calculate day-to-day math operations just using the keyboard. Support conversion of units like currency, length, time, area, volumne, mass, temperature. "
-    />
-    <link rel="stylesheet" href="./css/theme.css" />
-    <link rel="stylesheet" href="./css/editor.css" />
-    <link rel="stylesheet" href="./css/loader.css" />
-    <script type="module" src="./js/loader.js"></script>
-    <script type="module" src="./js/editor.js"></script>
-    <link
-      rel="icon"
-      type="image/png"
-      href="./assets/images/favicon/favicon-48.png"
-    />
-    <link rel="manifest" href="manifest.json" />
-  </head>
-  <body>
-    <div id="splash-screen" class="splash-screen">
-      <div class="loader"></div>
-      <div id="loading-message"></div>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Type to Calculate</title>
+  <meta name="description"
+    content="Type the calculations & see the results as you type. Calculate day-to-day math operations just using the keyboard. Support conversion of units like currency, length, time, area, volumne, mass, temperature. " />
+  <link rel="stylesheet" href="./css/theme.css" />
+  <link rel="stylesheet" href="./css/editor.css" />
+  <link rel="stylesheet" href="./css/loader.css" />
+  <script type="module" src="./js/loader.js"></script>
+  <script type="module" src="./js/editor.js"></script>
+  <link rel="icon" type="image/png" href="./assets/images/favicon/favicon-48.png" />
+  <link rel="manifest" href="manifest.json" />
+</head>
+
+<body>
+  <div id="splash-screen" class="splash-screen">
+    <div class="loader"></div>
+    <div id="loading-message"></div>
+  </div>
+  <h1 class="no-show">
+    Calculate day to day math operations just using the keyboard. The Best &
+    Fastest calculator you will need.
+  </h1>
+  <div class="app">
+    <div id="calculator" class="calculator">
+      <div id="editor" class="editor" contenteditable="plaintext-only" spellcheck="false"></div>
+      <div id="separator" class="separator"></div>
+      <div id="output" class="output" title="Click to copy &#10;Shift + click to copy & paste"></div>
     </div>
-    <h1 class="no-show">
-      Calculate day to day math operations just using the keyboard. The Best &
-      Fastest calculator you will need.
-    </h1>
-    <div class="app">
-      <div id="calculator" class="calculator">
-        <div
-          id="editor"
-          class="editor"
-          contenteditable="plaintext-only"
-          spellcheck="false"
-        ></div>
-        <div id="separator" class="separator"></div>
-        <div
-          id="output"
-          class="output"
-          title="Click to copy &#10;Shift + click to copy & paste"
-        ></div>
-      </div>
 
-      <div id="calculator-history">
-        <div class="history-label">History</div>
-      </div>
+    <div id="calculator-history">
+      <div class="history-label">History</div>
+    </div>
 
-      <div
-        id="help-button"
-        class="help-button"
-        title="Click to open help. &#10;Shortcut: 'Ctrl + ?'"
-      >
-        <img src="./assets/images/question-mark-icon.svg" alt="Help" />
-      </div>
-      <div class="help-overlay" id="help-overlay">
-        <a class="how-to-use" href="./blog/how-to-use.html">How to Use</a>
-        <div id="help-overlay-tables">
-          <div id="shortcut-table-container"></div>
-          <div id="operator-table-container"></div>
-          <p class="more-operators">
-            For&nbsp;
-            <a
-              class="reference-link"
-              target="_blank"
-              href="https://mathjs.org/docs/expressions/syntax.html#operators"
-            >
-              more operators</a
-            >
-          </p>
-          <div id="unit-table-container"></div>
+    <div class="floating-buttons-container">
+      <div class="floating-buttons-row"
+        style="display: flex; flex-direction: row-reverse; gap: 12px; align-items: center;">
+        <div id="help-button" class="help-button" title="Click to open help. &#10;Shortcut: 'Ctrl + ?'">
+          <img src="./assets/images/question-mark-icon.svg" alt="Help" />
         </div>
-        <section id="contact">
-          <p>
-            Source code&nbsp;
-            <a
-              class="reference-link"
-              target="_blank"
-              href="https://github.com/gokulk16/type-to-calculate-web"
-            >
-              here</a
-            >
-          </p>
-          <p>
-            Browser extension&nbsp;
-            <a
-              class="reference-link"
-              target="_blank"
-              href="https://chromewebstore.google.com/detail/type-to-calculate/fjookjcpmkeekemdfmolkfgdhgnhfphd"
-            >
-              here</a
-            >
-          </p>
-          <h2>
-            Contact us @
-            <a class="reference-link" href="mailto:gokulkathiresan1@gmail.com"
-              >gokulkathiresan1@gmail.com</a
-            >
-          </h2>
-          <br />
-          <form id="feedback-form" name="send-feedback" netlify>
-            <label for="feedback">Your feedback is valuable to us:</label><br />
-            <textarea
-              id="feedback"
-              name="feedback"
-              placeholder="Describe your feedback here..."
-              rows="4"
-              cols="50"
-            ></textarea
-            ><br />
-            <button type="submit">Send</button>
-          </form>
-        </section>
+        <div id="history-button-placeholder"></div>
       </div>
     </div>
-    <script
-      defer
-      src="https://cdn.jsdelivr.net/npm/pwacompat/pwacompat.min.js"
-      integrity="sha256-QmifG9ty2co3761lBWJwL5KdDOdJ4sFjQ/ULE4aD18U="
-      crossorigin="anonymous"
-    ></script>
-  </body>
+    <div class="help-overlay" id="help-overlay">
+      <a class="how-to-use" href="./blog/how-to-use.html">How to Use</a>
+      <div id="help-overlay-tables">
+        <div id="shortcut-table-container"></div>
+        <div id="operator-table-container"></div>
+        <p class="more-operators">
+          For&nbsp;
+          <a class="reference-link" target="_blank" href="https://mathjs.org/docs/expressions/syntax.html#operators">
+            more operators</a>
+        </p>
+        <div id="unit-table-container"></div>
+      </div>
+      <section id="contact">
+        <p>
+          Source code&nbsp;
+          <a class="reference-link" target="_blank" href="https://github.com/gokulk16/type-to-calculate-web">
+            here</a>
+        </p>
+        <p>
+          Browser extension&nbsp;
+          <a class="reference-link" target="_blank"
+            href="https://chromewebstore.google.com/detail/type-to-calculate/fjookjcpmkeekemdfmolkfgdhgnhfphd">
+            here</a>
+        </p>
+        <h2>
+          Contact us @
+          <a class="reference-link" href="mailto:gokulkathiresan1@gmail.com">gokulkathiresan1@gmail.com</a>
+        </h2>
+        <br />
+        <form id="feedback-form" name="send-feedback" netlify>
+          <label for="feedback">Your feedback is valuable to us:</label><br />
+          <textarea id="feedback" name="feedback" placeholder="Describe your feedback here..." rows="4"
+            cols="50"></textarea><br />
+          <button type="submit">Send</button>
+        </form>
+      </section>
+    </div>
+  </div>
+  <script defer src="https://cdn.jsdelivr.net/npm/pwacompat/pwacompat.min.js"
+    integrity="sha256-QmifG9ty2co3761lBWJwL5KdDOdJ4sFjQ/ULE4aD18U=" crossorigin="anonymous"></script>
+</body>
+
 </html>

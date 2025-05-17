@@ -28,6 +28,7 @@ let separators;
 let startX;
 let editorWidthBefore;
 let outputWidthBefore;
+let historyToggleButton;
 
 document.addEventListener("DOMContentLoaded", init);
 
@@ -195,6 +196,47 @@ function setupDocument() {
     // reference: https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/contenteditable#browser_compatibility
     // set the editor's contenteditable to true from plaintext-only
     editor.setAttribute("contenteditable", "true");
+  }
+}
+
+function hasHistory() {
+  return historyData.some(h => Array.isArray(h.lines) && h.lines.length > 1);
+}
+
+function createFloatingHistoryButton() {
+  if (document.getElementById("history-toggle-button")) {
+    return; // Prevent duplicates
+  }
+  const placeholder = document.getElementById("history-button-placeholder");
+  if (!placeholder) {
+    return;
+  }
+  historyToggleButton = document.createElement("button");
+  historyToggleButton.id = "history-toggle-button";
+  historyToggleButton.className = "floating-history-button";
+  historyToggleButton.type = "button";
+  historyToggleButton.setAttribute("aria-label", "Show history");
+  placeholder.appendChild(historyToggleButton);
+  updateHistoryToggleButton();
+  historyToggleButton.addEventListener("click", () => {
+    toggleHistory();
+    updateHistoryToggleButton();
+  });
+}
+
+/**
+ * Updates the floating history toggle button's text and classes.
+ * Handles only class and text changes, all styling is handled in CSS.
+ */
+function updateHistoryToggleButton() {
+  if (settingsData && settingsData.showHistory) {
+    historyToggleButton.textContent = "Hide History";
+    historyToggleButton.classList.add("active");
+    historyToggleButton.setAttribute("aria-label", "Hide history");
+  } else {
+    historyToggleButton.textContent = "Show History";
+    historyToggleButton.classList.remove("active");
+    historyToggleButton.setAttribute("aria-label", "Show history");
   }
 }
 
@@ -374,7 +416,7 @@ function setupListeners() {
   editor.addEventListener("input", onEditorInput, false);
   document.addEventListener("keydown", onEditorKeydown, false);
   output.addEventListener("click", onOutputClick, false);
-  helpButton.addEventListener("click", onHelpClick, false);
+  helpButton.addEventListener("click", toggleHelpOverlay, false); // Toggle help overlay
   helpOverlayTables.addEventListener("click", onOverlayClick, false);
   var calculatorHistory = document.getElementById("calculator-history");
   calculatorHistory.addEventListener("click", onHistoryClick, false);
@@ -929,6 +971,10 @@ export async function init() {
   setupDocument();
   await loadSettings();
   await loadData();
+  // Only create floating history button if history exists with more than one line
+  if (hasHistory()) {
+    createFloatingHistoryButton();
+  }
   let currencyUnitsAdded = await setupEvaluator();
   hideSplashScreen();
 
