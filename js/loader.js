@@ -20,7 +20,9 @@ export function initLoader() {
   // Start showing messages after 3 seconds
   setTimeout(() => {
     const messageContainer = document.getElementById('loading-message');
-    if (!messageContainer) return;
+    if (!messageContainer) {
+      return;
+    }
 
     messageContainer.style.opacity = '1';
     showLoadingMessage(true);

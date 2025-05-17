@@ -832,7 +832,9 @@ function hideSplashScreen() {
   // Hide splash screen after setupEvaluator completes
   const splashScreen = document.getElementById('splash-screen');
   splashScreen.classList.add('hidden');
-  splashScreen.remove();
+  setTimeout(() => {
+    splashScreen.remove();
+  }, 500);
 }
 
 function onWindowResize(e) {
