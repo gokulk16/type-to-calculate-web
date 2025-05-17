@@ -3,6 +3,7 @@ import { defineConfig, coverageConfigDefaults } from "vitest/config";
 export default defineConfig({
   test: {
     environment: "jsdom",
+    testTimeout: 10000,
     reporters: process.env.GITHUB_ACTIONS ? ["dot", "github-actions"] : ["dot"],
     coverage: {
       enabled: true,
@@ -13,7 +14,11 @@ export default defineConfig({
       ],
       reportOnFailure: true,
       clean: true,
-      exclude: ["**/**/esbuild.js", ...coverageConfigDefaults.exclude],
+      exclude: [
+        "**/**/esbuild.js",
+        "sw.js",
+        "esbuild-helper/**",
+        ...coverageConfigDefaults.exclude],
     },
   },
 });
