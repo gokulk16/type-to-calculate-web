@@ -25,6 +25,12 @@ function loadIndexHtml() {
 
 describe("Testing init method", () => {
   loadIndexHtml();
+  // wait for a second before running the test
+  beforeEach((done) => {
+    setTimeout(() => {
+      done();
+    }, 1000);
+  });
   afterEach(() => {
     vi.restoreAllMocks();
   });
