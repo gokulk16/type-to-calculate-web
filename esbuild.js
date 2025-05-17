@@ -7,7 +7,7 @@ import copyFilePlugin from "./esbuild-helper/copy-file-plugin.js";
 fsExtra.emptyDirSync("./dist");
 
 esbuild.build({
-  entryPoints: ["./js/editor.js"],
+  entryPoints: ["./js/editor.js", "./js/loader.js"],
   outdir: "dist/js",
   bundle: true,
   minify: true,
