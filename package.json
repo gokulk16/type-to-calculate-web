@@ -49,7 +49,7 @@
     "braces": "3.0.3",
     "country-to-currency": "^1.1.5",
     "lodash": "^4.17.21",
-    "mathjs": "^12.4.3",
+    "mathjs": "^14.4.0",
     "show-toast": "^1.1.4",
     "web-browser-storage": "^0.1.14"
   },
