@@ -67,8 +67,6 @@ body {
   outline: none;
   background-color: transparent;
   color: var(--input-number);
-  font-size: 21px;
-  line-height: 28px;
   text-align: left;
   overflow: auto !important;
   white-space: nowrap;
@@ -97,7 +95,9 @@ body {
 
 .history-editor,
 .history-output,
-.history-result-btn {
+.history-result-btn,
+.history-editor-item,
+.history-label {
   font-family: var(--font-mono);
   font-size: 21px;
   line-height: 28px;
@@ -124,9 +124,6 @@ body {
 }
 
 .history-label {
-  font-family: var(--font-mono);
-  font-size: 28px;
-  line-height: 30px;
   color: var(--history-accent-1);
   background: var(--history-accent-2);
   padding: 6px;
@@ -155,6 +152,26 @@ body {
   line-height: 42px;
 }
 
+/* Mobile device Styles */
+@media (max-width: 600px),
+(pointer: coarse) and (hover: none) {
+
+  .editor,
+  .output,
+  .result-btn {
+    font-size: 90px;
+    line-height: 100px;
+  }
+
+  .history-editor,
+  .history-output,
+  .history-result-btn,
+  .history-editor-item,
+  .history-label {
+    font-size: 64px;
+    line-height: 72px;
+  }
+}
 .result {
   color: var(--accent-result);
 }
@@ -180,16 +197,16 @@ body {
   bottom: 20px;
   right: 20px;
   z-index: 5;
-  }
-  
-  .floating-buttons-row {
-    display: flex;
-    flex-direction: row-reverse;
-    gap: 12px;
-    align-items: center;
-  }
-  
-  .help-button {
+}
+
+.floating-buttons-row {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 12px;
+  align-items: center;
+}
+
+.help-button {
   opacity: 0.7;
   padding: 10px;
   background-color: rgb(79 111 102);
@@ -216,18 +233,26 @@ body {
   opacity: 1;
   outline: 2px solid var(--help-text-primary);
 }
+
 .help-overlay {
-  position: fixed; /* Sit on top of the page content */
-  display: none; /* Hidden by default */
-  width: 100%; /* Full width (cover the whole page) */
-  height: 100%; /* Full height (cover the whole page) */
+  position: fixed;
+    /* Sit on top of the page content */
+    display: none;
+    /* Hidden by default */
+    width: 100%;
+    /* Full width (cover the whole page) */
+    height: 100%;
+    /* Full height (cover the whole page) */
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: var(--input-background); /* background with opacity */
-  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-  cursor: pointer; /* Add a pointer on hover */
+  background-color: var(--input-background);
+    /* background with opacity */
+    z-index: 2;
+    /* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer;
+    /* Add a pointer on hover */
   overflow-y: auto;
 }
 
@@ -259,9 +284,11 @@ td {
 tr:nth-child(even) {
   background-color: var(--output-background);
 }
+
 tr:nth-child(odd) {
   background-color: var(--input-background);
 }
+
 .more-operators {
   color: var(--history-accent-2);
   font-size: 16px;
