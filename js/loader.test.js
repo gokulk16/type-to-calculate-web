@@ -4,9 +4,7 @@ import { initLoader } from "./loader";
 describe("Testing loader.js", () => {
   beforeEach(() => {
     // Set up DOM elements
-    document.body.innerHTML = `
-      <div id="loading-message"></div>
-    `;
+    document.body.innerHTML = `<div id="loading-message"></div>`;
     
     // Reset mocks and timers
     vi.useFakeTimers();
