@@ -152,24 +152,21 @@ body {
   line-height: 42px;
 }
 
-/* Mobile device Styles */
-@media (max-width: 600px) {
 
-  .editor,
-  .output,
-  .result-btn {
-    font-size: 90px;
-    line-height: 100px;
-  }
+.mobile-device .editor,
+.mobile-device .output,
+.mobile-device .result-btn {
+  font-size: 90px !important;
+  line-height: 100px !important;
+}
 
-  .history-editor,
-  .history-output,
-  .history-result-btn,
-  .history-editor-item,
-  .history-label {
-    font-size: 64px;
-    line-height: 72px;
-  }
+.mobile-device .history-editor,
+.mobile-device .history-output,
+.mobile-device .history-result-btn,
+.mobile-device .history-editor-item,
+.mobile-device .history-label {
+  font-size: 64px !important;
+  line-height: 72px !important;
 }
 
 .result {
