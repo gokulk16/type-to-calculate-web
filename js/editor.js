@@ -7,6 +7,8 @@ import showToast from "show-toast";
 import { LocalStorage } from "web-browser-storage";
 import { createUnit, unit, evaluate as mathjs_evaluate } from "mathjs";
 import { callAI } from "./AI.js";
+import { isMobile } from 'mobile-device-detect';
+
 const storage = new LocalStorage();
 var _ = require("lodash");
 
@@ -30,7 +32,16 @@ let editorWidthBefore;
 let outputWidthBefore;
 let historyToggleButton;
 
-document.addEventListener("DOMContentLoaded", init);
+function setMobileDeviceClass() {
+  if (isMobile) {
+    document.body.classList.add('mobile-device');
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  setMobileDeviceClass();
+  init();
+});
 
 export async function setupHomeCurrency() {
   const fallbackHomeCurrency = "USD";

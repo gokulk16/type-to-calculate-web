@@ -52,7 +52,8 @@
     "lodash": "^4.17.21",
     "mathjs": "^14.4.0",
     "show-toast": "^1.1.4",
-    "web-browser-storage": "^0.1.14"
+    "web-browser-storage": "^0.1.14",
+    "mobile-device-detect": "^0.4.3"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^1.6.0",

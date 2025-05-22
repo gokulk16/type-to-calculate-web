@@ -152,26 +152,23 @@ body {
   line-height: 42px;
 }
 
-/* Mobile device Styles */
-@media (max-width: 600px),
-(pointer: coarse) and (hover: none) {
 
-  .editor,
-  .output,
-  .result-btn {
-    font-size: 90px;
-    line-height: 100px;
-  }
-
-  .history-editor,
-  .history-output,
-  .history-result-btn,
-  .history-editor-item,
-  .history-label {
-    font-size: 64px;
-    line-height: 72px;
-  }
+.mobile-device .editor,
+.mobile-device .output,
+.mobile-device .result-btn {
+  font-size: 84px !important;
+  line-height: 96px !important;
 }
+
+.mobile-device .history-editor,
+.mobile-device .history-output,
+.mobile-device .history-result-btn,
+.mobile-device .history-editor-item,
+.mobile-device .history-label {
+  font-size: 64px !important;
+  line-height: 72px !important;
+}
+
 .result {
   color: var(--accent-result);
 }
@@ -236,23 +233,23 @@ body {
 
 .help-overlay {
   position: fixed;
-    /* Sit on top of the page content */
-    display: none;
-    /* Hidden by default */
-    width: 100%;
-    /* Full width (cover the whole page) */
-    height: 100%;
-    /* Full height (cover the whole page) */
+  /* Sit on top of the page content */
+  display: none;
+  /* Hidden by default */
+  width: 100%;
+  /* Full width (cover the whole page) */
+  height: 100%;
+  /* Full height (cover the whole page) */
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background-color: var(--input-background);
-    /* background with opacity */
-    z-index: 2;
-    /* Specify a stack order in case you're using a different order for other elements */
-    cursor: pointer;
-    /* Add a pointer on hover */
+  /* background with opacity */
+  z-index: 2;
+  /* Specify a stack order in case you're using a different order for other elements */
+  cursor: pointer;
+  /* Add a pointer on hover */
   overflow-y: auto;
 }
 
