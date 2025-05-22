@@ -156,8 +156,8 @@ body {
 .mobile-device .editor,
 .mobile-device .output,
 .mobile-device .result-btn {
-  font-size: 90px !important;
-  line-height: 100px !important;
+  font-size: 84px !important;
+  line-height: 96px !important;
 }
 
 .mobile-device .history-editor,
