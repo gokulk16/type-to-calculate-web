@@ -129,8 +129,18 @@
 @media (max-width: 600px) {
   .hero {
     overflow-x: hidden !important;
-    width: 95vw;
+    width: 95vw !important;
+    font-size: 48px !important;
   }
+
+  .hero-button {
+    width: 50vw !important;
+    margin: 0 auto;
+    padding: 16px 0;
+    font-size: 3rem !important;
+  }
+
+
   .features-section, .usecases-section {
     padding: 0;
     border-radius: 0;
@@ -141,7 +151,7 @@
     box-sizing: border-box;
   }
   .features-section h2, .usecases-section h2, .features-h2, .usecases-h2 {
-    font-size: 1.35rem;
+    font-size: 1.8rem !important;
     margin-bottom: 12px;
     margin-top: 18px;
     width: 100vw;
@@ -153,13 +163,13 @@
     grid-template-columns: 1fr;
     gap: 10px 0;
     width: 100%;
-    max-width: 90vw;
+    max-width: 90vw !important;
     padding: 0;
     margin: 0;
     box-sizing: border-box;
   }
   .features-list li, .usecases-list li {
-    font-size: 1.22rem;
+    font-size: 1.5rem !important;
     padding: 14px 4vw 14px 4vw;
     border-radius: 0;
     min-width: 0;
@@ -167,23 +177,23 @@
     box-shadow: none;
     border: none;
     margin: 0;
-    width: 100vw;
+    width: 100vw !important;
     text-align: left;
     background: #f7fafd;
     box-sizing: border-box;
   }
   .features-list li strong, .usecases-list li strong {
-    font-size: 1.18em;
+    font-size: 1.18em !important;
   }
   .hero-title {
-    font-size: 1.35rem;
+    font-size: 2rem !important;
     padding: 0 2vw;
-    width: 100vw;
+    width: 90vw;
     text-align: left;
     box-sizing: border-box;
   }
   .hero-text {
-    font-size: 1.18rem;
+    font-size: 2rem !important;
     padding: 8px 2vw;
     width: 100vw;
     text-align: left;
@@ -203,7 +213,7 @@
     box-sizing: border-box;
   }
   .hero-button {
-    font-size: 1.23rem;
+    font-size: 2rem !important;
     padding: 14px 0;
     width: 100vw;
     border-radius: 0;
