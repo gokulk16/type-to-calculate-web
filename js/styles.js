@@ -2,4 +2,5 @@
 import "../css/theme.css";
 import "../css/editor.css";
 import "../css/loader.css";
+import "../css/blog.css";
 import "notyf/notyf.min.css";
