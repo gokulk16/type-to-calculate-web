@@ -3,11 +3,12 @@ import * as Sentry from "@sentry/browser";
 import * as currency from "./currency.js";
 import { createHelpTables } from "./help_page.js";
 import { convertXToMultiplication } from "./utils/convert_x_to_multiply.js";
-import showToast from "show-toast";
 import { LocalStorage } from "web-browser-storage";
 import { createUnit, unit, evaluate as mathjs_evaluate } from "mathjs";
 import { callAI } from "./AI.js";
 import { isMobile } from 'mobile-device-detect';
+import { Notyf } from 'notyf';
+
 
 const storage = new LocalStorage();
 var _ = require("lodash");
@@ -31,6 +32,7 @@ let startX;
 let editorWidthBefore;
 let outputWidthBefore;
 let historyToggleButton;
+let notyfInstance;
 
 function setMobileDeviceClass() {
   if (isMobile) {
@@ -103,7 +105,7 @@ function onOverlayClick() {
   focusEditor();
 }
 
-export async function setupEvaluator() {
+export async function setupCurrencyUnits() {
   homeCurrency = await setupHomeCurrency();
   createUnit(homeCurrency.toLowerCase());
   let currencyUnitsAdded = false;
@@ -139,6 +141,8 @@ export async function setupEvaluator() {
       }
     });
     currencyUnitsAdded = true;
+    showToastMessage("Currency conversions enabled! <br> Example: 10 usd to eur", 3400);
+
   } catch (error) {
     console.error("Error setting up currency tokens:", error);
   }
@@ -420,7 +424,11 @@ export function loadPlaceholderData(
 }
 
 async function loadData() {
+  await loadSettings();
   await loadHistory();
+  if (hasHistory()) {
+    createFloatingHistoryButton();
+  }
 }
 
 function setupListeners() {
@@ -529,8 +537,8 @@ function saveSettings() {
   storage.set(`ttc-settings`, settingsData);
 }
 
-function loadSettings() {
-  settingsData = storage.get("ttc-settings") || { showHistory: false };
+async function loadSettings() {
+  settingsData = await storage.get("ttc-settings") || { showHistory: false };
 }
 
 let saveData = debounce(async function () {
@@ -864,12 +872,45 @@ function onOutputClick(e) {
     }
   }
 }
-async function showToastMessage(message, timeOut = 2000) {
-  showToast({
-    str: message,
-    time: timeOut,
-    position: "bottom",
+async function showToastMessage(message, timeOut = 2000, type = "info", onClickRedirection = null) {
+  console.log('showToastMessage called with message:', message, 'type:', type, 'timeOut:', timeOut, 'onClickRedirection:', onClickRedirection);
+  // if notfInstance is not initialized, initialize it
+  if (!notyfInstance) {
+    notyfInstance = new Notyf({
+      duration: 3600,
+      position: {
+        x: 'center',
+        y: 'bottom',
+      },
+      dismissible: true,
+      ripple: true,
+      types: [
+        {
+          type: 'info',
+          background: 'blue',
+          icon: false,
+        },
+      ],
+    });
+  }
+  console.log('Notyf instance initialized:', notyfInstance);
+  // Show the toast message
+  let notification = notyfInstance.open({
+    type: type,
+    message: message,
+    duration: timeOut
   });
+  console.log('Notification created:', notification);
+  if (onClickRedirection) {
+    notification.on('click', ({ target, event }) => {
+      // target: the notification being clicked
+      // event: the mouseevent
+      window.location.href = '/blog/how-to-use';
+    });
+    console.log('Notification click handler set for redirection:', onClickRedirection);
+
+  }
+
 }
 
 async function copyValueToClipboard(value) {
@@ -980,18 +1021,14 @@ export async function init() {
   registerSW();
   initSentry();
   setupDocument();
-  await loadSettings();
-  await loadData();
-  // Only create floating history button if history exists with more than one line
-  if (hasHistory()) {
-    createFloatingHistoryButton();
-  }
-  let currencyUnitsAdded = await setupEvaluator();
   hideSplashScreen();
 
-  loadPlaceholderData(editor, historyData, currencyUnitsAdded);
+  // Ensure editor is initialized before using it for placeholder
+  loadPlaceholderData(editor, historyData, false);
   focusEditor();
   setupListeners();
   evaluate(editor.innerText);
   updateOutputDisplay(output);
+  loadData();
+  setupCurrencyUnits();
 }

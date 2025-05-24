@@ -51,19 +51,19 @@
     "country-to-currency": "^1.1.5",
     "lodash": "^4.17.21",
     "mathjs": "^14.4.0",
-    "show-toast": "^1.1.4",
-    "web-browser-storage": "^0.1.14",
-    "mobile-device-detect": "^0.4.3"
+    "mobile-device-detect": "^0.4.3",
+    "notyf": "^3.10.0",
+    "web-browser-storage": "^0.1.14"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^1.6.0",
     "esbuild": "^0.20.2",
     "esbuild-copy-static-files": "^0.1.0",
     "fs-extra": "^11.2.0",
-    "jsdom": "^24.1.1",
-    "npm-watch": "^0.12.0",
-    "vitest": "^1.6.0",
     "http-server": "^14.1.1",
-    "nodemon": "^3.1.0"
+    "jsdom": "^24.1.1",
+    "nodemon": "^3.1.0",
+    "npm-watch": "^0.12.0",
+    "vitest": "^1.6.0"
   }
 }

@@ -7,7 +7,11 @@ import copyFilePlugin from "./esbuild-helper/copy-file-plugin.js";
 fsExtra.emptyDirSync("./dist");
 
 esbuild.build({
-  entryPoints: ["./js/editor.js", "./js/loader.js"],
+  entryPoints: [
+    "./js/editor.js",
+    "./js/loader.js",
+    "./js/styles.js" // Add styles entry for CSS bundling
+  ],
   outdir: "dist/js",
   bundle: true,
   minify: true,
@@ -16,14 +20,6 @@ esbuild.build({
   plugins: [
     copyFilePlugin("./manifest.json", "./dist/manifest.json"),
     copyFilePlugin("./sw.js", "./dist/sw.js"),
-    copyStaticFiles({
-      src: "./css",
-      dest: "dist/css",
-      dereference: true,
-      errorOnExist: false,
-      preserveTimestamps: false,
-      recursive: true,
-    }),
     copyStaticFiles({
       src: "./assets",
       dest: "dist/assets",
@@ -46,4 +42,9 @@ esbuild.build({
       project: "javascript",
     }),
   ],
+  loader: {
+    '.css': 'css',
+    '.png': 'file',
+  },
+
 });
