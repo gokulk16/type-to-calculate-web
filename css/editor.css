@@ -334,6 +334,9 @@ tr:nth-child(odd) {
   transition: all 0.3s cubic-bezier(0.67, 0.17, 0.4, 0.83);
   border: none;
 }
+#feedback-form button:hover {
+  cursor: pointer;
+}
 
 .notyf_toast_custom_info {
   font-family: var(--font-mono);
