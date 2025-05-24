@@ -335,6 +335,16 @@ tr:nth-child(odd) {
   border: none;
 }
 
+.notyf_toast_custom_info {
+  font-family: var(--font-mono);
+  width: fit-content !important;
+  max-width: 90vw !important;
+  min-width: 36vw;
+  background-color: #205E95 !important;
+  border-radius: 2px;
+  border: 0.5px solid #bfc9d1;
+  cursor: pointer;
+}
 #feedback-form button:hover {
   cursor: pointer;
 }

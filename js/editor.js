@@ -8,6 +8,7 @@ import { createUnit, unit, evaluate as mathjs_evaluate } from "mathjs";
 import { callAI } from "./AI.js";
 import { isMobile } from 'mobile-device-detect';
 import { Notyf } from 'notyf';
+import sanitizeHtml from 'sanitize-html';
 
 
 const storage = new LocalStorage();
@@ -113,13 +114,7 @@ export async function setupCurrencyUnits() {
     // setup conversionRates
     conversionRates = await currency.getConversionRates();
 
-    // dynamically adding conversion token to convert from one currency to another currency
-    // example: '1 usd to gbp' should consider 'usd to gbp' as token and do the conversion
-    // example: '1 usd in gbp' should consider 'usd in gbp' as token and do the conversion
     Object.entries(conversionRates).forEach(([fromCurrencyCode, rates]) => {
-      // Dynamically add conversion tokens for all supported currencies to home currency
-      // example, if 1 USD = 83 INR
-
       if (fromCurrencyCode !== homeCurrency) {
         try {
           createUnit(
@@ -141,7 +136,7 @@ export async function setupCurrencyUnits() {
       }
     });
     currencyUnitsAdded = true;
-    showToastMessage("Currency conversions enabled! <br> Example: 10 usd to eur", 3400);
+    showToastMessage("Currency conversions enabled! <br> Type \"10 usd to eur\" to try out", 5555, "info", "/blog/how-to-use");
 
   } catch (error) {
     console.error("Error setting up currency tokens:", error);
@@ -616,7 +611,7 @@ export async function copyLastValue(values) {
     copyValueToClipboard(lastValue);
     return lastValue;
   } else {
-    showToastMessage(`No result to copy`);
+    showToastMessage(`No result to copy.`);
   }
 }
 
@@ -872,12 +867,12 @@ function onOutputClick(e) {
     }
   }
 }
-async function showToastMessage(message, timeOut = 2000, type = "info", onClickRedirection = null) {
-  console.log('showToastMessage called with message:', message, 'type:', type, 'timeOut:', timeOut, 'onClickRedirection:', onClickRedirection);
+async function showToastMessage(message, timeOut = 5000, type = "info", onClickRedirection) {
+  message = sanitizeHtml(message, { allowedTags: ['br'] });
   // if notfInstance is not initialized, initialize it
   if (!notyfInstance) {
     notyfInstance = new Notyf({
-      duration: 3600,
+      duration: 5000,
       position: {
         x: 'center',
         y: 'bottom',
@@ -887,28 +882,23 @@ async function showToastMessage(message, timeOut = 2000, type = "info", onClickR
       types: [
         {
           type: 'info',
-          background: 'blue',
           icon: false,
+          className: 'notyf_toast_custom_info',
         },
       ],
     });
   }
-  console.log('Notyf instance initialized:', notyfInstance);
   // Show the toast message
   let notification = notyfInstance.open({
     type: type,
     message: message,
     duration: timeOut
   });
-  console.log('Notification created:', notification);
+
   if (onClickRedirection) {
     notification.on('click', ({ target, event }) => {
-      // target: the notification being clicked
-      // event: the mouseevent
-      window.location.href = '/blog/how-to-use';
+      window.open(onClickRedirection, '_blank');
     });
-    console.log('Notification click handler set for redirection:', onClickRedirection);
-
   }
 
 }
@@ -1022,13 +1012,12 @@ export async function init() {
   initSentry();
   setupDocument();
   hideSplashScreen();
-
-  // Ensure editor is initialized before using it for placeholder
+  await loadData();
   loadPlaceholderData(editor, historyData, false);
   focusEditor();
   setupListeners();
   evaluate(editor.innerText);
   updateOutputDisplay(output);
-  loadData();
+
   setupCurrencyUnits();
 }
