@@ -3,11 +3,13 @@ import * as Sentry from "@sentry/browser";
 import * as currency from "./currency.js";
 import { createHelpTables } from "./help_page.js";
 import { convertXToMultiplication } from "./utils/convert_x_to_multiply.js";
-import showToast from "show-toast";
 import { LocalStorage } from "web-browser-storage";
 import { createUnit, unit, evaluate as mathjs_evaluate } from "mathjs";
 import { callAI } from "./AI.js";
 import { isMobile } from 'mobile-device-detect';
+import { Notyf } from 'notyf';
+import sanitizeHtml from 'sanitize-html';
+
 
 const storage = new LocalStorage();
 var _ = require("lodash");
@@ -31,6 +33,7 @@ let startX;
 let editorWidthBefore;
 let outputWidthBefore;
 let historyToggleButton;
+let notyfInstance;
 
 function setMobileDeviceClass() {
   if (isMobile) {
@@ -103,7 +106,7 @@ function onOverlayClick() {
   focusEditor();
 }
 
-export async function setupEvaluator() {
+export async function setupCurrencyUnits() {
   homeCurrency = await setupHomeCurrency();
   createUnit(homeCurrency.toLowerCase());
   let currencyUnitsAdded = false;
@@ -111,13 +114,7 @@ export async function setupEvaluator() {
     // setup conversionRates
     conversionRates = await currency.getConversionRates();
 
-    // dynamically adding conversion token to convert from one currency to another currency
-    // example: '1 usd to gbp' should consider 'usd to gbp' as token and do the conversion
-    // example: '1 usd in gbp' should consider 'usd in gbp' as token and do the conversion
     Object.entries(conversionRates).forEach(([fromCurrencyCode, rates]) => {
-      // Dynamically add conversion tokens for all supported currencies to home currency
-      // example, if 1 USD = 83 INR
-
       if (fromCurrencyCode !== homeCurrency) {
         try {
           createUnit(
@@ -139,6 +136,8 @@ export async function setupEvaluator() {
       }
     });
     currencyUnitsAdded = true;
+    showToastMessage("Currency conversions enabled! <br> Type \"10 usd to eur\" to try out", 5555, "info", "/blog/how-to-use");
+
   } catch (error) {
     console.error("Error setting up currency tokens:", error);
   }
@@ -420,7 +419,11 @@ export function loadPlaceholderData(
 }
 
 async function loadData() {
+  await loadSettings();
   await loadHistory();
+  if (hasHistory()) {
+    createFloatingHistoryButton();
+  }
 }
 
 function setupListeners() {
@@ -529,8 +532,8 @@ function saveSettings() {
   storage.set(`ttc-settings`, settingsData);
 }
 
-function loadSettings() {
-  settingsData = storage.get("ttc-settings") || { showHistory: false };
+async function loadSettings() {
+  settingsData = await storage.get("ttc-settings") || { showHistory: false };
 }
 
 let saveData = debounce(async function () {
@@ -608,7 +611,7 @@ export async function copyLastValue(values) {
     copyValueToClipboard(lastValue);
     return lastValue;
   } else {
-    showToastMessage(`No result to copy`);
+    showToastMessage(`No result to copy.`);
   }
 }
 
@@ -864,12 +867,40 @@ function onOutputClick(e) {
     }
   }
 }
-async function showToastMessage(message, timeOut = 2000) {
-  showToast({
-    str: message,
-    time: timeOut,
-    position: "bottom",
+async function showToastMessage(message, timeOut = 5000, type = "info", onClickRedirection) {
+  message = sanitizeHtml(message, { allowedTags: ['br'] });
+  // if notfInstance is not initialized, initialize it
+  if (!notyfInstance) {
+    notyfInstance = new Notyf({
+      duration: 5000,
+      position: {
+        x: 'center',
+        y: 'bottom',
+      },
+      dismissible: true,
+      ripple: true,
+      types: [
+        {
+          type: 'info',
+          icon: false,
+          className: 'notyf_toast_custom_info',
+        },
+      ],
+    });
+  }
+  // Show the toast message
+  let notification = notyfInstance.open({
+    type: type,
+    message: message,
+    duration: timeOut
   });
+
+  if (onClickRedirection) {
+    notification.on('click', ({ target, event }) => {
+      window.open(onClickRedirection, '_blank');
+    });
+  }
+
 }
 
 async function copyValueToClipboard(value) {
@@ -980,18 +1011,13 @@ export async function init() {
   registerSW();
   initSentry();
   setupDocument();
-  await loadSettings();
-  await loadData();
-  // Only create floating history button if history exists with more than one line
-  if (hasHistory()) {
-    createFloatingHistoryButton();
-  }
-  let currencyUnitsAdded = await setupEvaluator();
   hideSplashScreen();
-
-  loadPlaceholderData(editor, historyData, currencyUnitsAdded);
+  await loadData();
+  loadPlaceholderData(editor, historyData, false);
   focusEditor();
   setupListeners();
   evaluate(editor.innerText);
   updateOutputDisplay(output);
+
+  setupCurrencyUnits();
 }

@@ -39,7 +39,7 @@
   width: 180px;
   height: 180px;
   animation: pulse 1.5s ease-in-out infinite;
-  background-image: url('/assets/images/favicon/favicon-512.png');
+  background-image: url('../assets/images/favicon/favicon-512.png');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;

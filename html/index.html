@@ -6,13 +6,11 @@
   <title>Type to Calculate</title>
   <meta name="description"
     content="Type the calculations & see the results as you type. Calculate day-to-day math operations just using the keyboard. Support conversion of units like currency, length, time, area, volumne, mass, temperature. " />
-  <link rel="stylesheet" href="./css/theme.css" />
-  <link rel="stylesheet" href="./css/editor.css" />
-  <link rel="stylesheet" href="./css/loader.css" />
-  <script type="module" src="./js/loader.js"></script>
-  <script type="module" src="./js/editor.js"></script>
+  <script type="module" src="./js/loader.js" async></script>
+  <link rel="stylesheet" href="./js/styles.css" />
   <link rel="icon" type="image/png" href="./assets/images/favicon/favicon-48.png" />
   <link rel="manifest" href="manifest.json" />
+  <script type="module" src="./js/editor.js" defer></script>
 </head>
 
 <body>
@@ -45,7 +43,7 @@
       </div>
     </div>
     <div class="help-overlay" id="help-overlay">
-      <a class="how-to-use" href="./blog/how-to-use.html">How to Use</a>
+      <a class="how-to-use" href="./blog/how-to-use.html" target="_blank">How to Use</a>
       <div id="help-overlay-tables">
         <div id="shortcut-table-container"></div>
         <div id="operator-table-container"></div>
