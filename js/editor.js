@@ -1004,7 +1004,7 @@ export async function registerSW() {
             // Listen for the controllerchange event to reload the page when the new SW takes control
             navigator.serviceWorker.addEventListener('controllerchange', () => {
               console.log("New Service Worker activated.");
-            });
+            }, { once: true });
           }
         })
         .catch((error) => {

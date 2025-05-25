@@ -1,6 +1,6 @@
 // sw.js
 const APP_VERSION_DATE = "2025-05-25"; 
-const CACHE_NAME = "ttc-cache-v2";
+const CACHE_NAME = "ttc-cache-v3";
 
 // Fetch event: Cache responses immediately after fetching
 self.addEventListener("fetch", (event) => {
