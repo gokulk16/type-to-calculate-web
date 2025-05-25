@@ -59,7 +59,9 @@ const today = new Date().toISOString().slice(0, 10);
 const versionRegex = /const APP_VERSION_DATE = "([^"]+)"/;
 const newSwContent = swContent.replace(versionRegex, (match, p1) => {
   // Only append if not already appended
-  if (p1.endsWith(`${today}`)) return match;
+  if (p1.endsWith(`${today}`)) {
+    return match;
+  }
   return `const APP_VERSION_DATE = "${today}"`;
 });
 if (swContent !== newSwContent) {
