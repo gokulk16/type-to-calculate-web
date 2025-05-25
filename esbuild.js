@@ -48,3 +48,24 @@ esbuild.build({
   },
 
 });
+
+// update sw.js to trigger PWA updates for the installed applications
+
+// --- Update APP_VERSION in sw.js with today's date before build ---
+import fs from "fs";
+const swPath = './sw.js';
+const swContent = fs.readFileSync(swPath, 'utf8');
+const today = new Date().toISOString().slice(0, 10);
+const versionRegex = /const APP_VERSION_DATE = "([^"]+)"/;
+const newSwContent = swContent.replace(versionRegex, (match, p1) => {
+  // Only append if not already appended
+  if (p1.endsWith(`${today}`)) {
+    return match;
+  }
+  return `const APP_VERSION_DATE = "${today}"`;
+});
+if (swContent !== newSwContent) {
+  fs.writeFileSync(swPath, newSwContent, 'utf8');
+  console.log(`APP_VERSION updated in sw.js to include ${today}`);
+}
+

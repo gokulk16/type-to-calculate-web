@@ -35,7 +35,7 @@ let outputWidthBefore;
 let historyToggleButton;
 let notyfInstance;
 
-function setMobileDeviceClass() {
+export function setMobileDeviceClass() {
   if (isMobile) {
     document.body.classList.add('mobile-device');
   }
@@ -95,7 +95,7 @@ function setEndOfContenteditable(contentEditableElement) {
   }
 }
 
-function focusEditor() {
+export function focusEditor() {
   editor.focus();
   setEndOfContenteditable(editor);
 }
@@ -250,7 +250,7 @@ function updateHistoryToggleButton() {
   }
 }
 
-function sortHistory(a, b) {
+export function sortHistory(a, b) {
   // sorting comparison method to use in sort()
   const a_timestamp = new Date(a.modified);
   const b_timestamp = new Date(b.modified);
@@ -598,7 +598,7 @@ function isNumberResult(item) {
 }
 
 // find the last not empty value from evaluatedValues
-function findLastValue(values) {
+export function findLastValue(values) {
   let lastValue = values.findLast(isNumberResult);
   return lastValue ? lastValue.result : null;
 }
@@ -646,7 +646,7 @@ export function insertNode(...nodes) {
   }
 }
 
-function isTotalKeyword(word) {
+export function isTotalKeyword(word) {
   return ["total", "sum", "="].includes(word.toLowerCase().trim());
 }
 
@@ -700,25 +700,25 @@ export function evaluate(inputvalue) {
   return evaluatedValues;
 }
 
-function replaceInputsInIndex(input, replaceWithValue, index) {
+export function replaceInputsInIndex(input, replaceWithValue, index) {
   // split input with \n and then replce in the index
   let tempLines = input.split("\n");
   tempLines[index] = replaceWithValue;
   return tempLines.join("\n");
 }
 
-function isValidResult(resultValue) {
+export function isValidResult(resultValue) {
   return (_.isString(resultValue) && resultValue.length > 0) || (_.isNumber(resultValue));
 }
 
-function isValidAiResult(resultValue) {
+export function isValidAiResult(resultValue) {
   return (
     (_.isString(resultValue) && resultValue.length > 0) ||
     (_.isNumber(resultValue))
   );
 }
 
-function isNonEmptyString(val) {
+export function isNonEmptyString(val) {
   return typeof val === "string" && val.trim() !== "";
 }
 
@@ -940,7 +940,7 @@ function updateWidthOnResize(e) {
   document.addEventListener("mouseup", stopResize);
 }
 
-async function updateWidthOfHistory(editorWidth, outputWidth) {
+export async function updateWidthOfHistory(editorWidth, outputWidth) {
   let historyItemsList = document.body.querySelectorAll("#history-items");
   if (!_.isEmpty(historyItemsList)) {
     historyItemsList.forEach((item) => {
@@ -949,11 +949,11 @@ async function updateWidthOfHistory(editorWidth, outputWidth) {
   }
 }
 
-function updateWidthOfCalculator(editorWidth, outputWidth) {
+export function updateWidthOfCalculator(editorWidth, outputWidth) {
   calculator.style.gridTemplateColumns = `${editorWidth} 5px ${outputWidth}`;
 }
 
-function resize(e) {
+export function resize(e) {
   const dx = e.clientX - startX;
   const editorWidthAfter = `${editorWidthBefore + dx}px`;
   const outputWidthAfter = `${outputWidthBefore - dx}px`;
@@ -961,7 +961,7 @@ function resize(e) {
   updateWidthOfHistory(editorWidthAfter, outputWidthAfter);
 }
 
-function stopResize() {
+export function stopResize() {
   document.removeEventListener("mousemove", resize);
   document.removeEventListener("mouseup", stopResize);
 }
