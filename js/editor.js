@@ -990,14 +990,23 @@ export async function initSentry() {
 export async function registerSW() {
   try {
     if (!("serviceWorker" in navigator)) {
-      console.log("Service Workers are not supported by this browser");
       return;
     }
 
     window.addEventListener("load", () => {
       navigator.serviceWorker
         .register("../sw.js")
-        .then((registration) => { })
+        .then(reg => {
+          // Optionally, force the waiting SW to activate
+          if (reg.waiting) {
+            // Send message to waiting SW to skip waiting
+            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+            // Listen for the controllerchange event to reload the page when the new SW takes control
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+              console.log("New Service Worker activated.");
+            }, { once: true });
+          }
+        })
         .catch((error) => {
           console.error("Service Worker registration failed:", error);
         });
