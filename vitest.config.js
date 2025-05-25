@@ -18,6 +18,7 @@ export default defineConfig({
         "**/**/esbuild.js",
         "sw.js",
         "esbuild-helper/**",
+        "js/styles.js",
         ...coverageConfigDefaults.exclude],
     },
   },

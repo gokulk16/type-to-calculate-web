@@ -1,3 +1,4 @@
+import { AI_ENDPOINT_URL } from './constants.js';
 
 let lastCallTime = Date.now();
 
@@ -22,10 +23,10 @@ function debounce(callback, delay) {
 }
 
 // Debounced API call
-const debouncedCallAI = debounce(async (value) => {
+export const debouncedCallAI = debounce(async (value) => {
   const payload = { input: value };
   try {
-    const response = await fetch("https://fdeblqjfpiwn52phc3cmb4qiui0jrvzf.lambda-url.us-east-2.on.aws/", {
+    const response = await fetch(AI_ENDPOINT_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -58,7 +59,7 @@ const debouncedCallAI = debounce(async (value) => {
   }
 }, 3000);
 
-function canCallAI(value) {
+export function canCallAI(value) {
 
   // Check if the input is empty
   if (!value) {
