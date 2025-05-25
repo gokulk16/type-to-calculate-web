@@ -1,6 +1,6 @@
 // sw.js
 const APP_VERSION_DATE = "2025-05-25"; 
-const CACHE_NAME = "ttc-cache-v1";
+const CACHE_NAME = "ttc-cache-v2";
 
 // Fetch event: Cache responses immediately after fetching
 self.addEventListener("fetch", (event) => {
@@ -38,6 +38,13 @@ self.addEventListener("fetch", (event) => {
   );
 });
 
+// Message event: Listen for SKIP_WAITING messages
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 // Activate event: Clean up old caches if necessary
 self.addEventListener("activate", (event) => {
   const cacheWhitelist = [CACHE_NAME];
@@ -50,6 +57,8 @@ self.addEventListener("activate", (event) => {
           }
         })
       );
-    })
+    }).then(
+      () => self.clients.claim() // Ensure immediate control
+    ) 
   );
 });
