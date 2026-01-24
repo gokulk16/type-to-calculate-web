@@ -49,7 +49,7 @@
     "@sentry/esbuild-plugin": "^2.21.1",
     "braces": "3.0.3",
     "country-to-currency": "^1.1.5",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "mathjs": "^14.4.0",
     "mobile-device-detect": "^0.4.3",
     "notyf": "^3.10.0",
